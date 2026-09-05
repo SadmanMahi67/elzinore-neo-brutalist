@@ -1,20 +1,23 @@
 import Link from "next/link";
-import { ArrowUpRight, MessageCircle } from "lucide-react";
+import { Instagram, Facebook, MessageCircle } from "lucide-react";
 
 export function Footer() {
   return (
-    <footer className="border-t-4 border-black bg-black py-12 text-[var(--cream)]">
-      <div className="mx-auto grid max-w-6xl gap-10 px-4 md:grid-cols-4 md:px-6">
+    <footer className="border-t-4 border-black bg-black py-16 text-[var(--cream)] md:py-24">
+      <div className="mx-auto grid max-w-6xl gap-12 px-4 md:grid-cols-4 md:px-6">
         <div>
-          <p className="border-4 border-white bg-accent px-3 py-1 inline-block font-black uppercase tracking-tighter text-black">
+          <p className="border-4 border-white bg-accent px-4 py-2 inline-block font-grotesk text-2xl font-black uppercase tracking-tighter text-black">
             Elzinore
           </p>
-          <p className="mt-4 font-bold uppercase">Carry less. Carry louder.</p>
+          <p className="mt-4 text-lg font-bold uppercase">Carry less. Carry louder.</p>
         </div>
         <div>
           <p className="font-black uppercase">Shop</p>
           <Link href="/shop" className="mt-2 block hover:underline">
             All products
+          </Link>
+          <Link href="/reviews" className="mt-2 block hover:underline">
+            Reviews
           </Link>
         </div>
         <div>
@@ -22,7 +25,7 @@ export function Footer() {
           <Link href="/about" className="mt-2 block hover:underline">
             About us
           </Link>
-          <Link href="/#faq" className="mt-2 block hover:underline">
+          <Link href="/faq" className="mt-2 block hover:underline">
             FAQ
           </Link>
         </div>
@@ -36,22 +39,31 @@ export function Footer() {
           </a>
         </div>
       </div>
-      <div className="mx-auto mt-10 flex max-w-6xl items-center justify-between px-4 md:px-6">
-        <p className="font-bold uppercase">Made with care in Bangladesh.</p>
-        <div className="flex gap-3">
+
+      <div className="mx-auto mt-14 flex max-w-6xl flex-col items-center justify-between gap-6 px-4 md:flex-row md:px-6">
+        <p className="text-lg font-bold uppercase">Made with care in Bangladesh.</p>
+        <div className="flex gap-4">
+          {/* PLACEHOLDER: Replace # with real social handles */}
           <a
-            href="https://facebook.com"
-            aria-label="Facebook (placeholder)"
-            className="flex h-12 w-12 items-center justify-center border-4 border-white bg-yellow text-black shadow-[4px_4px_0_0_#fff]"
+            href="#"
+            aria-label="Instagram (placeholder)"
+            className="flex h-14 w-14 items-center justify-center border-4 border-white bg-violet text-black shadow-[4px_4px_0_0_#fff] transition-all duration-100 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
           >
-            <MessageCircle strokeWidth={3} />
+            <Instagram strokeWidth={3} />
           </a>
           <a
-            href="https://instagram.com"
-            aria-label="Instagram (placeholder)"
-            className="flex h-12 w-12 items-center justify-center border-4 border-white bg-violet text-black shadow-[4px_4px_0_0_#fff]"
+            href="#"
+            aria-label="Facebook (placeholder)"
+            className="flex h-14 w-14 items-center justify-center border-4 border-white bg-yellow text-black shadow-[4px_4px_0_0_#fff] transition-all duration-100 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
           >
-            <ArrowUpRight strokeWidth={3} />
+            <Facebook strokeWidth={3} />
+          </a>
+          <a
+            href="#"
+            aria-label="WhatsApp (placeholder)"
+            className="flex h-14 w-14 items-center justify-center border-4 border-white bg-accent text-black shadow-[4px_4px_0_0_#fff] transition-all duration-100 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
+          >
+            <MessageCircle strokeWidth={3} />
           </a>
         </div>
       </div>

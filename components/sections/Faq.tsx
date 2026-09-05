@@ -6,7 +6,7 @@ import { Reveal } from "@/components/ui/Reveal";
 const items = [
   {
     q: "How long does shipping take?",
-    a: "Inside Dhaka we aim for a few days after you confirm on WhatsApp. Outside Dhaka, courier timing is usually 2–5 days. We import in small batches — honest windows beat fake next-day promises.",
+    a: "Inside Dhaka we aim for a few days after your order is confirmed. Outside Dhaka, courier timing is usually 2–5 days. We import in small batches — honest windows beat fake next-day promises.",
   },
   {
     q: "What does RFID blocking actually do?",

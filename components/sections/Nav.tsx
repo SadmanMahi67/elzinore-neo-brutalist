@@ -13,7 +13,7 @@ const links = [
   { href: "/shop", label: "Shop" },
   { href: "/about", label: "About Us" },
   { href: "/my-orders", label: "My Orders" },
-  { href: "/#faq", label: "FAQ" },
+  { href: "/faq", label: "FAQ" },
 ];
 
 function NavLink({
@@ -29,7 +29,8 @@ function NavLink({
   const active =
     (href === "/shop" && pathname === "/shop") ||
     (href === "/about" && pathname === "/about") ||
-    (href === "/my-orders" && pathname === "/my-orders");
+    (href === "/my-orders" && pathname === "/my-orders") ||
+    (href === "/faq" && pathname === "/faq");
 
   return (
     <Link
