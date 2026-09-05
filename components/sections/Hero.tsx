@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { ArrowBurst, ShapeFloater, SpinStar } from "@/components/decor/Motifs";
-import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { useProductModal } from "@/components/providers/ModalProvider";
 import { liveWallet } from "@/lib/products";
@@ -14,7 +13,6 @@ export function Hero() {
     <section className="grid-paper relative overflow-hidden border-b-4 border-border bg-background">
       <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 py-20 md:grid-cols-2 md:px-6 md:py-32">
         <div>
-          <Badge>Now Shipping BD</Badge>
           <h1 className="mt-6 font-grotesk text-6xl font-black uppercase leading-none tracking-tighter md:text-8xl lg:text-9xl">
             Slim by{" "}
             <span className="hollow">design.</span>
