@@ -13,7 +13,7 @@ const items = [
 
 export function TrustStrip() {
   return (
-    <section className="border-b-4 border-border bg-yellow py-4 text-black">
+    <section className="border-b-4 border-border bg-yellow py-8 text-black md:py-12">
       <Marquee pauseOnHover speed={40} gradient={false}>
         {items.concat(items).map(({ icon: Icon, label }, i) => (
           <span

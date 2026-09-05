@@ -11,7 +11,7 @@ const quotes = [
 
 export function Testimonials() {
   return (
-    <section className="halftone border-b-4 border-border bg-background py-16">
+    <section className="halftone border-b-4 border-border bg-background py-24 md:py-32">
       <div className="mx-auto max-w-6xl px-4 md:px-6">
         <Reveal>
           <h2 className="font-grotesk text-5xl font-black uppercase leading-none tracking-tighter md:text-7xl">

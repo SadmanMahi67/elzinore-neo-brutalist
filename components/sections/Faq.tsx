@@ -28,7 +28,7 @@ const items = [
 
 export function Faq() {
   return (
-    <section id="faq" className="border-b-4 border-border bg-violet py-16 text-black">
+    <section id="faq" className="border-b-4 border-border bg-accent py-24 text-black md:py-32">
       <div className="mx-auto max-w-3xl px-4 md:px-6">
         <Reveal>
           <h2 className="mb-8 font-grotesk text-5xl font-black uppercase leading-none tracking-tighter md:text-7xl">

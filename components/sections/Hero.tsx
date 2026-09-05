@@ -12,7 +12,7 @@ export function Hero() {
 
   return (
     <section className="grid-paper relative overflow-hidden border-b-4 border-border bg-background">
-      <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 py-12 md:grid-cols-2 md:px-6 md:py-16">
+      <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 py-20 md:grid-cols-2 md:px-6 md:py-32">
         <div>
           <Badge>Now Shipping BD</Badge>
           <h1 className="mt-6 font-grotesk text-6xl font-black uppercase leading-none tracking-tighter md:text-8xl lg:text-9xl">

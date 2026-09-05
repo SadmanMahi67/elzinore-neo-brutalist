@@ -11,7 +11,7 @@ export function ProductTeaser() {
   const { openProduct } = useProductModal();
 
   return (
-    <section id="product" className="halftone border-b-4 border-border bg-violet py-16 text-black">
+    <section id="product" className="halftone border-b-4 border-border bg-violet py-24 text-black md:py-32">
       <div className="mx-auto max-w-6xl px-4 md:px-6">
         <Reveal>
           <div className="relative grid gap-8 border-4 border-border bg-panel p-6 text-foreground shadow-brutal-xl md:grid-cols-2 md:p-10">
