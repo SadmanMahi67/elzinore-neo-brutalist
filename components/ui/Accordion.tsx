@@ -15,7 +15,7 @@ export function Accordion({ items }: { items: FaqItem[] }) {
       {items.map((item, i) => {
         const isOpen = open === i;
         return (
-          <div key={item.q} className="border-4 border-border bg-panel shadow-brutal">
+          <div key={item.q} className="border-4 border-border bg-panel text-foreground shadow-brutal">
             <button
               type="button"
               className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left font-grotesk text-xl font-black uppercase tracking-tight md:text-2xl"

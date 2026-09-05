@@ -69,7 +69,7 @@ export const products: Product[] = [
     images: [],
     alt: "Placeholder slot for Elzinore’s next accessory",
     description:
-      "We are five people with one live SKU. The next slot stays empty until something earns it. If you have a strong opinion, tell us — we actually read the messages.",
+      "We are four people with one live SKU. The next slot stays empty until something earns it. If you have a strong opinion, tell us — we actually read the messages.",
     specs: ["Undecided", "Community-informed", "No rush"],
     teaser: "Reserved for whatever we cannot stop thinking about.",
   },

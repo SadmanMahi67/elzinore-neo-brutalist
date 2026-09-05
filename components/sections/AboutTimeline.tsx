@@ -1,9 +1,9 @@
 import { Reveal } from "@/components/ui/Reveal";
 
 const milestones = [
-  { n: "01", title: "Pooled the funds", body: "Five of us put savings on the table and agreed this was not a side hustle we would abandon in a month." },
+  { n: "01", title: "Pooled the funds", body: "Four of us put savings on the table and agreed this was not a side hustle we would abandon in a month." },
   { n: "02", title: "Sourced the wallet", body: "We compared shells, RFID liners, and clasps until one sample survived a week in real pockets." },
-  { n: "03", title: "Launched Elzinore", body: "One live SKU, a WhatsApp thread, and a site that does not pretend we are a department store." },
+  { n: "03", title: "Launched Elzinore", body: "One live SKU and a site that does not pretend we are a department store." },
   { n: "04", title: "What’s next", body: "Leather belts and a small imprinting setup — after the wallet has a life of its own." },
 ];
 

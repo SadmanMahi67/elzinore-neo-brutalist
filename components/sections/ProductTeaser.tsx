@@ -38,7 +38,7 @@ export function ProductTeaser() {
               </h2>
               <p className="mt-3 text-3xl font-black">{liveWallet.priceLabel}</p>
               <p className="mt-4 text-lg font-bold md:text-xl">
-                Our only live product — on purpose. Open it, bag it, message us. The rest of the shelf is still a sketch.
+                Currently our only product — by design. Everything else stays in development until it&apos;s ready to stand next to it.
               </p>
               <div className="mt-8 flex flex-wrap gap-8">
                 <Button

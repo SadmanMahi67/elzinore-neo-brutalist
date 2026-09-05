@@ -28,8 +28,8 @@ export function Footer() {
         </div>
         <div>
           <p className="font-black uppercase">Contact</p>
-          <Link href="/#order" className="mt-2 block hover:underline">
-            How to order
+          <Link href="/my-orders" className="mt-2 block hover:underline">
+            My Orders
           </Link>
           <a href="mailto:hello@elzinore.shop" className="mt-2 block hover:underline">
             Email stub

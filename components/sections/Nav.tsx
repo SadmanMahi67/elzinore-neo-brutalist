@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/Button";
 const links = [
   { href: "/shop", label: "Shop" },
   { href: "/about", label: "About Us" },
+  { href: "/my-orders", label: "My Orders" },
   { href: "/#faq", label: "FAQ" },
 ];
 
@@ -27,7 +28,8 @@ function NavLink({
   const pathname = usePathname();
   const active =
     (href === "/shop" && pathname === "/shop") ||
-    (href === "/about" && pathname === "/about");
+    (href === "/about" && pathname === "/about") ||
+    (href === "/my-orders" && pathname === "/my-orders");
 
   return (
     <Link
