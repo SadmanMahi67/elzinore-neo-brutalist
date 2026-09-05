@@ -35,7 +35,7 @@ export function ProductCard({
         )}
         {live && (
           <span className="absolute left-4 top-4 z-10 -rotate-6 rounded-full border-4 border-border bg-yellow px-3 py-1 font-black uppercase text-black shadow-brutal">
-            ★ Bestseller
+            ★ Signature piece
           </span>
         )}
         <button

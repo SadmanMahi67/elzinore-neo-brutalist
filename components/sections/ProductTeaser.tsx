@@ -16,7 +16,7 @@ export function ProductTeaser() {
         <Reveal>
           <div className="relative grid gap-8 border-4 border-border bg-panel p-6 text-foreground shadow-brutal-xl md:grid-cols-2 md:p-10">
             <Badge className="absolute -left-3 -top-4 z-10" rotate={-8}>
-              Bestseller
+              Signature piece
             </Badge>
             <button
               type="button"

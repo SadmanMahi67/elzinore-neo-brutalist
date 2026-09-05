@@ -22,10 +22,7 @@ export function Hero() {
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-8">
             <Button href="/shop" variant="primary" size="lg">
-              Order the wallet
-            </Button>
-            <Button href="/shop" variant="ghost">
-              What&apos;s coming
+              Look inside
             </Button>
           </div>
           <ArrowBurst className="mt-8 hidden h-10 w-20 text-ink md:block" />
