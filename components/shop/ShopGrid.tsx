@@ -9,11 +9,7 @@ export function ShopGrid() {
 
   return (
     <div className="mt-10">
-      {/* ── Available Now ──────────────────────────────── */}
-      <h2 className="font-grotesk text-4xl font-black uppercase leading-none tracking-tighter md:text-6xl">
-        Available Now
-      </h2>
-      <div className="mt-6 grid gap-8 md:grid-cols-2">
+      <div className="grid gap-8 md:grid-cols-2">
         {liveProducts.map((p, i) => (
           <ProductCard key={p.id} product={p} index={i} />
         ))}

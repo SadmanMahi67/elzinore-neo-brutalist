@@ -12,9 +12,6 @@ export default function ShopPage() {
       <h1 className="font-grotesk text-6xl font-black uppercase leading-none tracking-tighter md:text-8xl">
         Shop
       </h1>
-      <p className="mt-4 max-w-2xl text-lg font-bold md:text-xl">
-        One thing you can buy today. Three sketches for later. Tap a card.
-      </p>
       <ShopGrid />
     </main>
   );
