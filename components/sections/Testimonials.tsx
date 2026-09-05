@@ -15,7 +15,7 @@ export function Testimonials() {
       <div className="mx-auto max-w-6xl px-4 md:px-6">
         <Reveal>
           <h2 className="font-grotesk text-5xl font-black uppercase leading-none tracking-tighter md:text-7xl">
-            From the first bags
+            Reviews
           </h2>
         </Reveal>
       </div>
