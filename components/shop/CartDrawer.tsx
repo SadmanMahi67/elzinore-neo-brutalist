@@ -6,7 +6,6 @@ import Image from "next/image";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/Button";
 import { useCart } from "@/components/providers/CartProvider";
-import { ORDER_HREF } from "@/lib/constants";
 import { formatTaka } from "@/lib/products";
 
 export function CartDrawer() {
@@ -124,10 +123,16 @@ export function CartDrawer() {
                     <span>Subtotal</span>
                     <span>{formatTaka(subtotal)}</span>
                   </p>
-                  <p className="mt-2 font-bold">No card checkout — we confirm over WhatsApp.</p>
+                  <p className="mt-2 font-bold">Cash on Delivery — pay when your package arrives.</p>
                   <div className="mt-4">
-                    <Button href={ORDER_HREF} variant="primary" size="lg" className="w-full">
-                      Order via WhatsApp
+                    <Button
+                      href="/checkout"
+                      variant="primary"
+                      size="lg"
+                      className="w-full"
+                      onClick={() => setDrawerOpen(false)}
+                    >
+                      Proceed to Checkout
                     </Button>
                   </div>
                 </div>
