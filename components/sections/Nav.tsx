@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
+import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import { useCart } from "@/components/providers/CartProvider";
 import { ThemeToggle } from "@/components/shop/ThemeToggle";
 import { Button } from "@/components/ui/Button";
@@ -85,6 +86,31 @@ export function Nav() {
               </motion.span>
             )}
           </button>
+          <SignedOut>
+            <SignInButton mode="modal">
+              <button
+                type="button"
+                className="hidden h-12 items-center justify-center border-4 border-border bg-panel px-4 font-grotesk text-sm font-black uppercase tracking-tight shadow-brutal transition-all duration-100 ease-out hover:-translate-y-0.5 hover:shadow-brutal-md active:translate-x-[2px] active:translate-y-[2px] active:shadow-none md:inline-flex"
+              >
+                Sign In
+              </button>
+            </SignInButton>
+          </SignedOut>
+          <SignedIn>
+            <div className="hidden items-center md:flex">
+              <UserButton
+                appearance={{
+                  elements: {
+                    userButtonAvatarBox: "h-11 w-11 border-4 border-border shadow-brutal rounded-none",
+                    userButtonTrigger: "focus:shadow-none rounded-none focus:outline-none transition-all duration-100 hover:-translate-y-0.5",
+                    userButtonPopoverCard: "border-4 border-border shadow-brutal rounded-none bg-panel",
+                    userButtonPopoverActionButton: "hover:bg-accent/20 font-grotesk font-black uppercase text-sm",
+                    userButtonPopoverActionButtonText: "font-grotesk font-bold",
+                  },
+                }}
+              />
+            </div>
+          </SignedIn>
           <span className="hidden md:inline">
             <Button href="/shop" size="sm">
               Order Now
@@ -118,9 +144,37 @@ export function Nav() {
           {links.map((l) => (
             <NavLink key={l.href} {...l} onClick={() => setOpen(false)} />
           ))}
-          <div className="mt-8 flex items-center gap-8">
-            <ThemeToggle />
-            <Button href="/shop" onClick={() => setOpen(false)}>
+          <div className="mt-8 flex flex-col gap-4">
+            <div className="flex items-center justify-between border-4 border-border bg-panel p-3 shadow-brutal">
+              <span className="font-grotesk text-sm font-black uppercase">Theme</span>
+              <ThemeToggle />
+            </div>
+            <SignedOut>
+              <SignInButton mode="modal">
+                <button
+                  type="button"
+                  onClick={() => setOpen(false)}
+                  className="flex h-14 w-full items-center justify-center border-4 border-border bg-panel px-6 font-grotesk text-base font-black uppercase tracking-tight shadow-brutal transition-all duration-100 ease-out hover:-translate-y-0.5 hover:shadow-brutal-md active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
+                >
+                  Sign In
+                </button>
+              </SignInButton>
+            </SignedOut>
+            <SignedIn>
+              <div className="flex items-center justify-between border-4 border-border bg-panel p-3 shadow-brutal">
+                <span className="font-grotesk text-sm font-black uppercase">Account</span>
+                <UserButton
+                  appearance={{
+                    elements: {
+                      userButtonAvatarBox: "h-11 w-11 border-4 border-border shadow-brutal rounded-none",
+                      userButtonTrigger: "focus:shadow-none rounded-none focus:outline-none",
+                      userButtonPopoverCard: "border-4 border-border shadow-brutal rounded-none bg-panel",
+                    },
+                  }}
+                />
+              </div>
+            </SignedIn>
+            <Button href="/shop" onClick={() => setOpen(false)} className="w-full justify-center">
               Order Now
             </Button>
           </div>

@@ -13,6 +13,12 @@ import { formatTaka } from "@/lib/products";
  * backend once auth and order tracking are implemented.
  * These mock orders exist solely so the layout can be
  * reviewed and approved before the backend is ready.
+ *
+ * NOTE (Clerk Auth Integration Hook):
+ * In the next pass, connect real order queries filtered by
+ * user ID:
+ *   const { userId } = useAuth(); // or auth() in a server component
+ *   const userOrders = await getOrdersByUserId(userId);
  * ──────────────────────────────────────────────────────────────
  */
 const MOCK_PAST_ORDERS = [
