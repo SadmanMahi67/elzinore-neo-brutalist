@@ -1,57 +1,74 @@
 "use client";
 
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import { Minus, Plus, Trash2, Package } from "lucide-react";
+import { SignInButton, useAuth } from "@clerk/nextjs";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { useCart } from "@/components/providers/CartProvider";
 import { formatTaka } from "@/lib/products";
 
-/*
- * ──────────────────────────────────────────────────────────────
- * PLACEHOLDER DATA — replace with real order history from a
- * backend once auth and order tracking are implemented.
- * These mock orders exist solely so the layout can be
- * reviewed and approved before the backend is ready.
- *
- * NOTE (Clerk Auth Integration Hook):
- * In the next pass, connect real order queries filtered by
- * user ID:
- *   const { userId } = useAuth(); // or auth() in a server component
- *   const userOrders = await getOrdersByUserId(userId);
- * ──────────────────────────────────────────────────────────────
- */
-const MOCK_PAST_ORDERS = [
-  {
-    id: "ELZ-0042",
-    date: "2025-08-28",
-    items: [{ name: "Carbon Fiber RFID Wallet", qty: 2, price: 1400 }],
-    city: "Dhaka",
-    status: "Delivered" as const,
-  },
-  {
-    id: "ELZ-0039",
-    date: "2025-08-15",
-    items: [{ name: "Carbon Fiber RFID Wallet", qty: 1, price: 1400 }],
-    city: "Chattogram",
-    status: "Delivered" as const,
-  },
-  {
-    id: "ELZ-0051",
-    date: "2025-09-03",
-    items: [{ name: "Carbon Fiber RFID Wallet", qty: 3, price: 1400 }],
-    city: "Sylhet",
-    status: "Placed" as const,
-  },
-];
+interface OrderItem {
+  name: string;
+  qty: number;
+  price: number;
+}
+
+interface OrderRecord {
+  id: string;
+  rawId: string;
+  date: string;
+  city: string;
+  status: string;
+  totalAmount: number;
+  items: OrderItem[];
+}
 
 const statusColor: Record<string, string> = {
   Placed: "bg-yellow",
   Delivered: "bg-accent",
+  Processing: "bg-violet",
+  Shipped: "bg-violet",
 };
 
 export default function MyOrdersPage() {
   const { items, subtotal, setQuantity, removeItem } = useCart();
+  const { isSignedIn, isLoaded } = useAuth();
+  const [orders, setOrders] = useState<OrderRecord[]>([]);
+  const [loadingOrders, setLoadingOrders] = useState(false);
+
+  useEffect(() => {
+    if (!isLoaded || !isSignedIn) {
+      setOrders([]);
+      return;
+    }
+
+    let active = true;
+    setLoadingOrders(true);
+
+    fetch("/api/orders")
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to load orders");
+        return res.json();
+      })
+      .then((data) => {
+        if (active) {
+          setOrders(data.orders || []);
+          setLoadingOrders(false);
+        }
+      })
+      .catch((err) => {
+        console.error("Error fetching orders:", err);
+        if (active) {
+          setLoadingOrders(false);
+        }
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [isLoaded, isSignedIn]);
 
   return (
     <main className="grid-paper mx-auto max-w-6xl px-4 py-12 md:px-6 md:py-16">
@@ -70,7 +87,7 @@ export default function MyOrdersPage() {
             <p className="hollow font-grotesk text-5xl font-black uppercase leading-none">
               Cart&apos;s empty
             </p>
-            <p className="mt-4 max-w-sm mx-auto font-bold">
+            <p className="mx-auto mt-4 max-w-sm font-bold">
               The carbon fiber wallet is waiting on the shop page.
             </p>
             <div className="mt-6">
@@ -147,60 +164,101 @@ export default function MyOrdersPage() {
         )}
       </section>
 
-      {/* ── Past Orders (placeholder) ────────────────────── */}
+      {/* ── Past Orders ──────────────────────────────────── */}
       <section className="mt-16">
         <h2 className="font-grotesk text-3xl font-black uppercase tracking-tight md:text-5xl">
           Past Orders
         </h2>
-        <p className="mt-2 font-bold">
-          Placeholder data — real order history will appear here once the
-          backend is live.
-        </p>
 
-        <div className="mt-6 space-y-4">
-          {MOCK_PAST_ORDERS.map((order) => (
-            <div
-              key={order.id}
-              className="border-4 border-border bg-panel p-5 shadow-brutal-md"
-            >
-              <div className="flex flex-wrap items-start justify-between gap-4">
-                <div className="flex items-center gap-3">
-                  <Package strokeWidth={3} className="h-6 w-6 shrink-0" />
-                  <div>
-                    <p className="font-grotesk text-xl font-black uppercase tracking-tight">
-                      {order.id}
-                    </p>
-                    <p className="text-sm font-bold">{order.date}</p>
-                  </div>
-                </div>
-                <Badge
-                  rotate={0}
-                  className={`${statusColor[order.status] ?? "bg-violet"} text-black`}
-                >
-                  {order.status}
-                </Badge>
-              </div>
-
-              <div className="mt-4 border-t-4 border-border pt-4">
-                {order.items.map((item) => (
-                  <div
-                    key={item.name}
-                    className="flex items-center justify-between gap-4"
-                  >
-                    <p className="font-black uppercase">{item.name}</p>
-                    <p className="shrink-0 font-bold">
-                      ×{item.qty} — {formatTaka(item.price * item.qty)}
-                    </p>
-                  </div>
-                ))}
-              </div>
-
-              <p className="mt-3 text-sm font-bold">
-                Delivery: {order.city}
-              </p>
+        {!isLoaded ? (
+          <div className="mt-6 border-4 border-border bg-panel p-10 text-center shadow-brutal-md">
+            <p className="font-grotesk text-xl font-bold uppercase tracking-tight">
+              Loading session...
+            </p>
+          </div>
+        ) : !isSignedIn ? (
+          <div className="mt-6 border-4 border-border bg-panel p-10 text-center shadow-brutal-md">
+            <p className="hollow font-grotesk text-4xl font-black uppercase leading-none md:text-5xl">
+              Sign In To View Orders
+            </p>
+            <p className="mx-auto mt-4 max-w-md font-bold">
+              Sign in with your account to view your past purchases, track your order statuses, and access your order history.
+            </p>
+            <div className="mt-6">
+              <SignInButton mode="modal">
+                <Button variant="primary">Sign In</Button>
+              </SignInButton>
             </div>
-          ))}
-        </div>
+          </div>
+        ) : loadingOrders ? (
+          <div className="mt-6 border-4 border-border bg-panel p-10 text-center shadow-brutal-md animate-pulse">
+            <p className="font-grotesk text-2xl font-black uppercase tracking-tight">
+              Fetching your orders...
+            </p>
+          </div>
+        ) : orders.length === 0 ? (
+          <div className="mt-6 border-4 border-border bg-panel p-10 text-center shadow-brutal-md">
+            <p className="hollow font-grotesk text-4xl font-black uppercase leading-none md:text-5xl">
+              No orders yet
+            </p>
+            <p className="mx-auto mt-4 max-w-md font-bold">
+              They&apos;ll show up here once you place one. Check out the Carbon Fiber RFID Wallet in our shop.
+            </p>
+            <div className="mt-6">
+              <Button href="/shop" variant="primary">
+                Browse Shop
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="mt-6 space-y-4">
+            {orders.map((order) => (
+              <div
+                key={order.rawId}
+                className="border-4 border-border bg-panel p-5 shadow-brutal-md"
+              >
+                <div className="flex flex-wrap items-start justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <Package strokeWidth={3} className="h-6 w-6 shrink-0" />
+                    <div>
+                      <p className="font-grotesk text-xl font-black uppercase tracking-tight">
+                        {order.id}
+                      </p>
+                      <p className="text-sm font-bold">{order.date}</p>
+                    </div>
+                  </div>
+                  <Badge
+                    rotate={0}
+                    className={`${statusColor[order.status] ?? "bg-violet"} text-black`}
+                  >
+                    {order.status}
+                  </Badge>
+                </div>
+
+                <div className="mt-4 border-t-4 border-border pt-4">
+                  {order.items.map((item, idx) => (
+                    <div
+                      key={`${item.name}-${idx}`}
+                      className="flex items-center justify-between gap-4"
+                    >
+                      <p className="font-black uppercase">{item.name}</p>
+                      <p className="shrink-0 font-bold">
+                        ×{item.qty} — {formatTaka(item.price * item.qty)}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t-2 border-border/20 pt-3 text-sm font-bold">
+                  <p>Delivery: {order.city}</p>
+                  <p className="text-base font-black">
+                    Total: {formatTaka(order.totalAmount)}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </section>
     </main>
   );

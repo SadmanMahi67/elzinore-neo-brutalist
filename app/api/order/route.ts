@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { auth } from "@clerk/nextjs/server";
 import { getDb } from "@/lib/db";
 
 interface OrderItemInput {
@@ -94,10 +95,18 @@ export async function POST(req: Request) {
 
     const sql = getDb();
 
-    // 1. Insert order record
+    let userId: string | null = null;
+    try {
+      const authResult = auth();
+      userId = authResult?.userId ?? null;
+    } catch {
+      userId = null;
+    }
+
+    // 1. Insert order record (user_id is populated if authenticated, null for guests)
     const orderRows = await sql`
-      INSERT INTO orders (customer_name, phone, email, address, payment_method, status, total_amount)
-      VALUES (${customerName}, ${phone}, ${email}, ${address}, 'cod', 'placed', ${totalAmount})
+      INSERT INTO orders (user_id, customer_name, phone, email, address, payment_method, status, total_amount)
+      VALUES (${userId}, ${customerName}, ${phone}, ${email}, ${address}, 'cod', 'placed', ${totalAmount})
       RETURNING id, total_amount;
     `;
 

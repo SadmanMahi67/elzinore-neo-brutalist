@@ -44,21 +44,9 @@ export default function RootLayout({
     <ClerkProvider
       appearance={{
         variables: {
-          colorPrimary: "#000000",
-          colorText: "#000000",
+          colorPrimary: "#ff6b6b",
           borderRadius: "0px",
-        },
-        elements: {
-          card: "border-4 border-border shadow-brutal rounded-none bg-panel",
-          modalContent: "border-4 border-border rounded-none shadow-brutal-md",
-          socialButtonsBlockButton:
-            "border-4 border-border rounded-none font-grotesk font-black uppercase shadow-brutal hover:-translate-y-0.5 hover:shadow-brutal-md active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all",
-          socialButtonsBlockButtonText: "font-grotesk font-black uppercase text-sm",
-          headerTitle: "font-grotesk font-black uppercase tracking-tight text-2xl",
-          headerSubtitle: "font-grotesk font-bold text-sm text-foreground/80",
-          formButtonPrimary:
-            "border-4 border-border bg-accent text-black font-grotesk font-black uppercase rounded-none shadow-brutal hover:shadow-brutal-md active:translate-x-[2px] active:translate-y-[2px] active:shadow-none",
-          footerActionLink: "font-black underline hover:text-accent",
+          fontFamily: "var(--font-grotesk), sans-serif",
         },
       }}
     >

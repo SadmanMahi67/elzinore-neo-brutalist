@@ -55,6 +55,20 @@ async function runMigration() {
     );
   `;
 
+  console.log("Adding 'user_id' column to 'orders' if it does not exist...");
+  await sql`
+    ALTER TABLE orders ADD COLUMN IF NOT EXISTS user_id TEXT;
+  `;
+
+  console.log("Creating 'carts' table if it does not exist...");
+  await sql`
+    CREATE TABLE IF NOT EXISTS carts (
+      user_id TEXT PRIMARY KEY,
+      items JSONB NOT NULL DEFAULT '[]',
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    );
+  `;
+
   console.log("Migration executed successfully!");
 }
 

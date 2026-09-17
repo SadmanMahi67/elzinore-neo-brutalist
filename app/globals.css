@@ -84,3 +84,206 @@ body {
     animation: none;
   }
 }
+
+/* ──────────────────────────────────────────────────────────────
+ * Neo-Brutalist Clerk Overrides
+ * Applies strict neo-brutalist tokens to all Clerk modals & cards.
+ * Fixes light/dark contrast bug and removes pill-shaped styling.
+ * ────────────────────────────────────────────────────────────── */
+.cl-modalBackdrop {
+  background-color: rgba(0, 0, 0, 0.75) !important;
+}
+
+.cl-card,
+.cl-modalContent {
+  border: 4px solid var(--border) !important;
+  box-shadow: 8px 8px 0 0 var(--shadow) !important;
+  border-radius: 0px !important;
+  background-color: var(--panel) !important;
+  color: var(--foreground) !important;
+}
+
+.cl-headerTitle {
+  font-family: var(--font-grotesk), sans-serif !important;
+  font-weight: 900 !important;
+  text-transform: uppercase !important;
+  letter-spacing: -0.04em !important;
+  color: var(--foreground) !important;
+  font-size: 1.5rem !important;
+}
+
+.cl-headerSubtitle {
+  font-family: var(--font-grotesk), sans-serif !important;
+  font-weight: 700 !important;
+  color: var(--foreground) !important;
+  opacity: 0.8 !important;
+}
+
+/* Social Buttons ("Continue with Google") */
+.cl-socialButtonsBlockButton {
+  border: 4px solid var(--border) !important;
+  box-shadow: 4px 4px 0 0 var(--shadow) !important;
+  border-radius: 0px !important;
+  background-color: var(--panel) !important;
+  color: var(--foreground) !important;
+  font-family: var(--font-grotesk), sans-serif !important;
+  font-weight: 900 !important;
+  text-transform: uppercase !important;
+  letter-spacing: -0.01em !important;
+  height: 3rem !important;
+  transition: all 100ms ease-out !important;
+}
+
+.cl-socialButtonsBlockButton:hover {
+  background-color: var(--yellow) !important;
+  color: #000000 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 6px 6px 0 0 var(--shadow) !important;
+}
+
+.cl-socialButtonsBlockButton:active {
+  transform: translate(2px, 2px) !important;
+  box-shadow: none !important;
+}
+
+.cl-socialButtonsBlockButtonText {
+  color: inherit !important;
+  font-family: var(--font-grotesk), sans-serif !important;
+  font-weight: 900 !important;
+  text-transform: uppercase !important;
+}
+
+/* Primary Action / "Continue" Button */
+.cl-formButtonPrimary {
+  border: 4px solid var(--border) !important;
+  box-shadow: 4px 4px 0 0 var(--shadow) !important;
+  border-radius: 0px !important;
+  background-color: var(--accent) !important;
+  color: #000000 !important; /* Always readable bold black on coral accent */
+  font-family: var(--font-grotesk), sans-serif !important;
+  font-weight: 900 !important;
+  text-transform: uppercase !important;
+  letter-spacing: -0.01em !important;
+  height: 3rem !important;
+  transition: all 100ms ease-out !important;
+}
+
+.cl-formButtonPrimary:hover {
+  background-color: var(--yellow) !important;
+  color: #000000 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 6px 6px 0 0 var(--shadow) !important;
+}
+
+.cl-formButtonPrimary:active {
+  transform: translate(2px, 2px) !important;
+  box-shadow: none !important;
+}
+
+/* Form Inputs */
+.cl-formFieldInput {
+  border: 4px solid var(--border) !important;
+  box-shadow: 4px 4px 0 0 var(--shadow) !important;
+  border-radius: 0px !important;
+  background-color: var(--panel) !important;
+  color: var(--foreground) !important;
+  font-family: var(--font-grotesk), sans-serif !important;
+  font-weight: 700 !important;
+  height: 3rem !important;
+}
+
+.cl-formFieldInput:focus {
+  outline: none !important;
+  border-color: var(--accent) !important;
+  box-shadow: 6px 6px 0 0 var(--shadow) !important;
+}
+
+.cl-formFieldLabel {
+  color: var(--foreground) !important;
+  font-family: var(--font-grotesk), sans-serif !important;
+  font-weight: 900 !important;
+  text-transform: uppercase !important;
+  font-size: 0.85rem !important;
+}
+
+/* Dividers and Footers */
+.cl-dividerLine {
+  background-color: var(--border) !important;
+  height: 2px !important;
+}
+
+.cl-dividerText {
+  color: var(--foreground) !important;
+  font-family: var(--font-grotesk), sans-serif !important;
+  font-weight: 900 !important;
+  text-transform: uppercase !important;
+}
+
+.cl-footer {
+  background: transparent !important;
+}
+
+.cl-footerActionLink {
+  color: var(--foreground) !important;
+  font-family: var(--font-grotesk), sans-serif !important;
+  font-weight: 900 !important;
+  text-decoration: underline !important;
+}
+
+.cl-footerActionLink:hover {
+  color: var(--accent) !important;
+}
+
+.cl-identityPreview {
+  border: 4px solid var(--border) !important;
+  border-radius: 0px !important;
+  background-color: var(--panel) !important;
+  color: var(--foreground) !important;
+  box-shadow: 4px 4px 0 0 var(--shadow) !important;
+}
+
+.cl-identityPreviewText {
+  color: var(--foreground) !important;
+  font-family: var(--font-grotesk), sans-serif !important;
+  font-weight: 700 !important;
+}
+
+.cl-identityPreviewEditButton {
+  color: var(--accent) !important;
+}
+
+/* User Button Menu Popover */
+.cl-userButtonPopoverCard {
+  border: 4px solid var(--border) !important;
+  box-shadow: 8px 8px 0 0 var(--shadow) !important;
+  border-radius: 0px !important;
+  background-color: var(--panel) !important;
+  color: var(--foreground) !important;
+}
+
+.cl-userButtonPopoverActionButton {
+  font-family: var(--font-grotesk), sans-serif !important;
+  font-weight: 900 !important;
+  text-transform: uppercase !important;
+  color: var(--foreground) !important;
+  border-radius: 0px !important;
+}
+
+.cl-userButtonPopoverActionButton:hover {
+  background-color: var(--yellow) !important;
+  color: #000000 !important;
+}
+
+.cl-userPreviewMainIdentifier {
+  font-family: var(--font-grotesk), sans-serif !important;
+  font-weight: 900 !important;
+  color: var(--foreground) !important;
+}
+
+.cl-userPreviewSecondaryIdentifier {
+  font-family: var(--font-grotesk), sans-serif !important;
+  font-weight: 700 !important;
+  color: var(--foreground) !important;
+  opacity: 0.7 !important;
+}
+
