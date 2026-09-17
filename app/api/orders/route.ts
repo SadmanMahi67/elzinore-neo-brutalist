@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { getDb } from "@/lib/db";
+import { formatBangladeshDateTime } from "@/lib/date";
 
 export const dynamic = "force-dynamic";
 
@@ -42,7 +43,7 @@ export async function GET() {
     `;
 
     // Group items by order_id
-    const itemsByOrder: Record<string, { name: string; qty: number; price: number }[]> = {};
+    const itemsByOrder: Record<string, { name: string; qty: number; price: number; image?: string }[]> = {};
     for (const item of items) {
       const oid = item.order_id;
       if (!itemsByOrder[oid]) {
@@ -52,17 +53,15 @@ export async function GET() {
         name: item.product_name,
         qty: Number(item.quantity),
         price: Number(item.unit_price),
+        image: item.product_name.toLowerCase().includes("wallet")
+          ? "/images/wallet-hero.jpg"
+          : "",
       });
     }
 
     // Format list for My Orders UI
     const formattedOrders = orders.map((order) => {
-      const dateObj = new Date(order.created_at);
-      const formattedDate = dateObj.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      });
+      const formattedDate = formatBangladeshDateTime(order.created_at);
 
       // Capitalize status
       const rawStatus = order.status || "placed";

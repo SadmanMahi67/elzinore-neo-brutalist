@@ -18,6 +18,8 @@ export interface OrderDetailData {
   id?: string;
   orderId?: string;
   shortId?: string;
+  date?: string;
+  createdAt?: string;
   customerName: string;
   phone: string;
   email?: string;
@@ -103,14 +105,27 @@ export function OrderDetail({
         </p>
       </div>
 
-      {/* Order Reference ID */}
-      <div className="mt-8 space-y-2">
-        <p className="font-grotesk text-xs font-black uppercase tracking-wider text-foreground/70">
-          Order Reference ID
-        </p>
-        <div className="inline-block border-4 border-border bg-background px-4 py-2 font-mono text-sm font-black shadow-brutal">
-          {displayId}
+      {/* Order Reference ID & Date */}
+      <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
+        <div className="space-y-2">
+          <p className="font-grotesk text-xs font-black uppercase tracking-wider text-foreground/70">
+            Order Reference ID
+          </p>
+          <div className="inline-block border-4 border-border bg-background px-4 py-2 font-mono text-sm font-black shadow-brutal">
+            {displayId}
+          </div>
         </div>
+
+        {order.date && (
+          <div className="space-y-2 text-left sm:text-right">
+            <p className="font-grotesk text-xs font-black uppercase tracking-wider text-foreground/70">
+              Order Date (BD Time)
+            </p>
+            <div className="inline-block border-4 border-border bg-background px-4 py-2 font-grotesk text-sm font-bold shadow-brutal">
+              {order.date}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Purchased Items */}
@@ -119,40 +134,49 @@ export function OrderDetail({
           Purchased Items
         </h2>
         <div className="mt-4 space-y-3">
-          {order.items.map((line, idx) => (
-            <div
-              key={line.id || `${line.name}-${idx}`}
-              className="flex items-center justify-between border-4 border-border bg-background p-4 shadow-brutal"
-            >
-              <div className="flex items-center gap-4">
-                {line.image ? (
-                  <div className="relative h-14 w-14 shrink-0 overflow-hidden border-2 border-border">
-                    <Image
-                      src={line.image}
-                      alt={line.name}
-                      fill
-                      className="object-cover"
-                    />
+          {order.items.map((line, idx) => {
+            const itemImage =
+              line.image && line.image.startsWith("/") && !line.image.includes("front-closed")
+                ? line.image
+                : line.name.toLowerCase().includes("wallet")
+                ? "/images/wallet-hero.jpg"
+                : "";
+
+            return (
+              <div
+                key={line.id || `${line.name}-${idx}`}
+                className="flex items-center justify-between border-4 border-border bg-background p-4 shadow-brutal"
+              >
+                <div className="flex items-center gap-4">
+                  {itemImage ? (
+                    <div className="relative h-14 w-14 shrink-0 overflow-hidden border-2 border-border bg-panel">
+                      <Image
+                        src={itemImage}
+                        alt={line.name}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="flex h-14 w-14 shrink-0 items-center justify-center border-2 border-border bg-panel">
+                      <Package className="h-7 w-7 text-foreground/80" />
+                    </div>
+                  )}
+                  <div>
+                    <p className="font-grotesk text-base font-black uppercase">
+                      {line.name}
+                    </p>
+                    <p className="text-sm font-bold text-foreground/70">
+                      Quantity: {line.quantity} × {formatTaka(line.price)}
+                    </p>
                   </div>
-                ) : (
-                  <div className="flex h-14 w-14 shrink-0 items-center justify-center border-2 border-border bg-panel">
-                    <Package className="h-7 w-7 text-foreground/80" />
-                  </div>
-                )}
-                <div>
-                  <p className="font-grotesk text-base font-black uppercase">
-                    {line.name}
-                  </p>
-                  <p className="text-sm font-bold text-foreground/70">
-                    Quantity: {line.quantity} × {formatTaka(line.price)}
-                  </p>
                 </div>
+                <p className="font-grotesk text-lg font-black">
+                  {formatTaka(line.price * line.quantity)}
+                </p>
               </div>
-              <p className="font-grotesk text-lg font-black">
-                {formatTaka(line.price * line.quantity)}
-              </p>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 

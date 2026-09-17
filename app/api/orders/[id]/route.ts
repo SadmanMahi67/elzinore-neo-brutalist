@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { getDb } from "@/lib/db";
+import { formatBangladeshDateTime } from "@/lib/date";
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -55,12 +56,7 @@ export async function GET(
       WHERE order_id = ${id};
     `;
 
-    const dateObj = new Date(order.created_at);
-    const formattedDate = dateObj.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
+    const formattedDate = formatBangladeshDateTime(order.created_at);
 
     const rawStatus = (order.status || "placed").toLowerCase();
     const capitalizedStatus = rawStatus.charAt(0).toUpperCase() + rawStatus.slice(1);
@@ -85,7 +81,7 @@ export async function GET(
         lineTotal: Number(item.line_total),
         // Fallback or wallet image for recognized product
         image: item.product_name.toLowerCase().includes("wallet")
-          ? "/images/products/wallet/front-closed.jpg"
+          ? "/images/wallet-hero.jpg"
           : "",
       })),
     };

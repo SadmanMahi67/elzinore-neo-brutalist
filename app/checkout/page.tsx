@@ -9,6 +9,7 @@ import { formatTaka } from "@/lib/products";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { OrderDetail } from "@/components/shop/OrderDetail";
+import { formatBangladeshDateTime } from "@/lib/date";
 
 interface CompletedOrder {
   orderId: string;
@@ -16,6 +17,7 @@ interface CompletedOrder {
   customerName: string;
   phone: string;
   address: string;
+  date?: string;
   items: CartLine[];
 }
 
@@ -97,6 +99,7 @@ export default function CheckoutPage() {
         customerName: trimmedName,
         phone: trimmedPhone,
         address: trimmedAddress,
+        date: formatBangladeshDateTime(new Date()),
         items: [...items],
       });
 

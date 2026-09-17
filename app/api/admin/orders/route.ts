@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { checkIsAdmin } from "@/lib/isAdmin";
 import { getDb } from "@/lib/db";
+import { formatBangladeshDateTime } from "@/lib/date";
 
 export const dynamic = "force-dynamic";
 
@@ -89,14 +90,7 @@ export async function GET(req: Request) {
           ? orderItems.map((i) => `${i.name} ×${i.qty}`).join(", ")
           : "No items";
 
-      const dateObj = new Date(order.created_at);
-      const formattedDate = dateObj.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      });
+      const formattedDate = formatBangladeshDateTime(order.created_at);
 
       return {
         id: order.id,
