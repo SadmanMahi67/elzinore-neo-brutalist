@@ -8,6 +8,7 @@ import { useCart, CartLine } from "@/components/providers/CartProvider";
 import { formatTaka } from "@/lib/products";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
+import { OrderDetail } from "@/components/shop/OrderDetail";
 
 interface CompletedOrder {
   orderId: string;
@@ -111,106 +112,7 @@ export default function CheckoutPage() {
   if (completedOrder) {
     return (
       <main className="grid-paper mx-auto max-w-4xl px-4 py-12 md:px-6 md:py-20">
-        <div className="border-4 border-border bg-panel p-6 shadow-brutal-xl md:p-10">
-          <div className="flex flex-wrap items-center justify-between gap-4 border-b-4 border-border pb-6">
-            <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center border-4 border-border bg-accent text-black shadow-brutal">
-                <CheckCircle2 strokeWidth={3} className="h-7 w-7" />
-              </div>
-              <div>
-                <h1 className="font-grotesk text-3xl font-black uppercase tracking-tight md:text-5xl">
-                  Order Placed
-                </h1>
-                <p className="font-bold text-sm">We received your order and are packing it.</p>
-              </div>
-            </div>
-            <Badge rotate={0} className="bg-yellow text-black text-sm">
-              Status: Placed
-            </Badge>
-          </div>
-
-          <div className="mt-6 border-4 border-border bg-yellow/20 p-4 font-bold text-foreground">
-            <p className="font-grotesk text-lg font-black uppercase">
-              Payment Method: Cash on Delivery (COD)
-            </p>
-            <p className="mt-1 text-sm">
-              Please have <span className="font-black underline">{formatTaka(completedOrder.totalAmount)}</span> ready in cash when the courier delivers to your door.
-            </p>
-          </div>
-
-          <div className="mt-8 space-y-3">
-            <p className="font-grotesk text-xs font-black uppercase tracking-wider text-muted-foreground">
-              Order Reference ID
-            </p>
-            <div className="inline-block border-4 border-border bg-background px-4 py-2 font-mono text-sm font-black shadow-brutal">
-              {completedOrder.orderId}
-            </div>
-          </div>
-
-          {/* Items Breakdown */}
-          <div className="mt-8">
-            <h2 className="font-grotesk text-xl font-black uppercase tracking-tight">
-              Purchased Items
-            </h2>
-            <div className="mt-4 space-y-3">
-              {completedOrder.items.map((line) => (
-                <div
-                  key={line.id}
-                  className="flex items-center justify-between border-4 border-border bg-background p-4 shadow-brutal"
-                >
-                  <div className="flex items-center gap-4">
-                    {line.image ? (
-                      <div className="relative h-14 w-14 shrink-0 overflow-hidden border-2 border-border">
-                        <Image src={line.image} alt={line.name} fill className="object-cover" />
-                      </div>
-                    ) : (
-                      <Package className="h-8 w-8" />
-                    )}
-                    <div>
-                      <p className="font-grotesk font-black uppercase text-base">{line.name}</p>
-                      <p className="text-sm font-bold text-muted-foreground">
-                        Quantity: {line.quantity} × {formatTaka(line.price)}
-                      </p>
-                    </div>
-                  </div>
-                  <p className="font-grotesk text-lg font-black">
-                    {formatTaka(line.price * line.quantity)}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Delivery Details */}
-          <div className="mt-8 border-t-4 border-border pt-6">
-            <h2 className="font-grotesk text-xl font-black uppercase tracking-tight">
-              Delivery Address
-            </h2>
-            <div className="mt-3 border-4 border-border bg-background p-4 shadow-brutal">
-              <p className="font-black">{completedOrder.customerName}</p>
-              <p className="font-bold">{completedOrder.phone}</p>
-              <p className="mt-1 font-bold whitespace-pre-line">{completedOrder.address}</p>
-            </div>
-          </div>
-
-          {/* Total */}
-          <div className="mt-8 flex items-center justify-between border-t-4 border-border pt-6">
-            <span className="font-grotesk text-2xl font-black uppercase">Total Payable</span>
-            <span className="font-grotesk text-3xl font-black text-accent">
-              {formatTaka(completedOrder.totalAmount)}
-            </span>
-          </div>
-
-          {/* Next Steps Buttons */}
-          <div className="mt-10 flex flex-wrap gap-4">
-            <Button href="/shop" variant="primary" size="lg">
-              Return to Shop
-            </Button>
-            <Button href="/my-orders" variant="ghost" size="lg">
-              View Order History
-            </Button>
-          </div>
-        </div>
+        <OrderDetail order={completedOrder} mode="placed" />
       </main>
     );
   }

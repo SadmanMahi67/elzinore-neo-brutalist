@@ -2,12 +2,13 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { Minus, Plus, Trash2, Package } from "lucide-react";
+import { Minus, Plus, Trash2, Package, ArrowUpRight } from "lucide-react";
 import { SignInButton, useAuth } from "@clerk/nextjs";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { useCart } from "@/components/providers/CartProvider";
 import { formatTaka } from "@/lib/products";
+import { OrderDetailModal } from "@/components/shop/OrderDetailModal";
 
 interface OrderItem {
   name: string;
@@ -30,6 +31,8 @@ const statusColor: Record<string, string> = {
   Delivered: "bg-accent",
   Processing: "bg-violet",
   Shipped: "bg-violet",
+  Confirmed: "bg-violet",
+  Cancelled: "bg-panel text-foreground",
 };
 
 export default function MyOrdersPage() {
@@ -37,6 +40,7 @@ export default function MyOrdersPage() {
   const { isSignedIn, isLoaded } = useAuth();
   const [orders, setOrders] = useState<OrderRecord[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(false);
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isLoaded || !isSignedIn) {
@@ -226,13 +230,22 @@ export default function MyOrdersPage() {
             {orders.map((order) => (
               <div
                 key={order.rawId}
-                className="border-4 border-border bg-panel p-5 shadow-brutal-md"
+                role="button"
+                tabIndex={0}
+                onClick={() => setSelectedOrderId(order.rawId || order.id)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    setSelectedOrderId(order.rawId || order.id);
+                  }
+                }}
+                className="group border-4 border-border bg-panel p-5 shadow-brutal-md transition-all duration-100 ease-out hover:-translate-y-1 hover:shadow-brutal-lg active:translate-x-[2px] active:translate-y-[2px] active:shadow-none cursor-pointer focus:outline-none"
               >
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div className="flex items-center gap-3">
                     <Package strokeWidth={3} className="h-6 w-6 shrink-0" />
                     <div>
-                      <p className="font-grotesk text-xl font-black uppercase tracking-tight">
+                      <p className="font-grotesk text-xl font-black uppercase tracking-tight group-hover:text-accent">
                         {order.id}
                       </p>
                       <p className="text-sm font-bold">{order.date}</p>
@@ -262,15 +275,26 @@ export default function MyOrdersPage() {
 
                 <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t-2 border-border/20 pt-3 text-sm font-bold">
                   <p>Delivery: {order.city}</p>
-                  <p className="text-base font-black">
-                    Total: {formatTaka(order.totalAmount)}
-                  </p>
+                  <div className="flex items-center gap-4">
+                    <p className="text-base font-black">
+                      Total: {formatTaka(order.totalAmount)}
+                    </p>
+                    <span className="inline-flex items-center gap-1 font-grotesk text-xs font-black uppercase tracking-tight text-accent group-hover:underline">
+                      View Details <ArrowUpRight size={14} strokeWidth={3} />
+                    </span>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
         )}
       </section>
+
+      {/* Order Detail Modal */}
+      <OrderDetailModal
+        orderId={selectedOrderId}
+        onClose={() => setSelectedOrderId(null)}
+      />
     </main>
   );
 }
