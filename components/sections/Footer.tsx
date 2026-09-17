@@ -34,8 +34,8 @@ export function Footer() {
           <Link href="/my-orders" className="mt-2 block hover:underline">
             My Orders
           </Link>
-          <a href="mailto:hello@elzinore.shop" className="mt-2 block hover:underline">
-            Email stub
+          <a href="mailto:elzinorelifestyle@gmail.com" className="mt-2 block hover:underline">
+            elzinorelifestyle@gmail.com
           </a>
         </div>
       </div>
