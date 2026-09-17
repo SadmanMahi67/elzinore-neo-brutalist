@@ -43,25 +43,30 @@ export function Footer() {
       <div className="mx-auto mt-14 flex max-w-6xl flex-col items-center justify-between gap-6 px-4 md:flex-row md:px-6">
         <p className="text-lg font-bold uppercase">Made with care in Bangladesh.</p>
         <div className="flex gap-4">
-          {/* PLACEHOLDER: Replace # with real social handles */}
           <a
-            href="#"
-            aria-label="Instagram (placeholder)"
-            className="flex h-14 w-14 items-center justify-center border-4 border-white bg-violet text-black shadow-[4px_4px_0_0_#fff] transition-all duration-100 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
+            href="https://www.instagram.com/elzinore.shop/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Instagram"
+            className="flex h-14 w-14 items-center justify-center border-4 border-white bg-violet text-black shadow-[4px_4px_0_0_#fff] transition-all duration-100 hover:-translate-y-0.5 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
           >
             <Instagram strokeWidth={3} />
           </a>
           <a
-            href="#"
-            aria-label="Facebook (placeholder)"
-            className="flex h-14 w-14 items-center justify-center border-4 border-white bg-yellow text-black shadow-[4px_4px_0_0_#fff] transition-all duration-100 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
+            href="https://www.facebook.com/profile.php?id=61593891004191"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Facebook"
+            className="flex h-14 w-14 items-center justify-center border-4 border-white bg-yellow text-black shadow-[4px_4px_0_0_#fff] transition-all duration-100 hover:-translate-y-0.5 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
           >
             <Facebook strokeWidth={3} />
           </a>
           <a
-            href="#"
-            aria-label="WhatsApp (placeholder)"
-            className="flex h-14 w-14 items-center justify-center border-4 border-white bg-accent text-black shadow-[4px_4px_0_0_#fff] transition-all duration-100 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
+            href="https://m.me/61593891004191"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Facebook Messenger"
+            className="flex h-14 w-14 items-center justify-center border-4 border-white bg-accent text-black shadow-[4px_4px_0_0_#fff] transition-all duration-100 hover:-translate-y-0.5 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
           >
             <MessageCircle strokeWidth={3} />
           </a>
