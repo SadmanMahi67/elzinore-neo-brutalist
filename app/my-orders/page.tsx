@@ -160,6 +160,17 @@ export default function MyOrdersPage() {
                 <span>{formatTaka(subtotal)}</span>
               </p>
             </div>
+
+            <div className="mt-6">
+              <Button
+                href="/checkout"
+                variant="primary"
+                size="lg"
+                className="w-full justify-center"
+              >
+                Proceed to Checkout
+              </Button>
+            </div>
           </div>
         )}
       </section>
