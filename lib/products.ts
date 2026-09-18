@@ -20,8 +20,13 @@ export const products: Product[] = [
     price: 1400,
     priceLabel: "৳1,400",
     status: "live",
-    // SWAP: replace these with additional studio shots when you have them
-    images: ["/images/wallet-hero.jpg", "/images/wallet-lifestyle.jpg"],
+    images: [
+      "/images/wallet-hero.jpg",
+      "/images/wallet-lifestyle.jpg",
+      "/images/wallet-closed-flat.jpg",
+      "/images/wallet-side-profile.jpg",
+      "/images/wallet-open-back.jpg",
+    ],
     alt: "Elzinore carbon fiber RFID wallet",
     description:
       "A slim pop-up wallet we obsessed over for months — carbon fiber shell, RFID blocking, and a magnetic clasp that actually stays shut in a Dhaka auto. One product, done properly, before we chase the next thing.",

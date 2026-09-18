@@ -114,7 +114,7 @@ export function ProductModal() {
                   )}
                 </div>
                 {images.length > 1 && (
-                  <div className="mt-3 flex gap-3">
+                  <div className="mt-3 flex flex-wrap gap-3">
                     {images.map((src, i) => (
                       <button
                         key={src}
