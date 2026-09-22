@@ -37,6 +37,12 @@ export function Footer() {
           <a href="mailto:elzinorelifestyle@gmail.com" className="mt-2 block hover:underline">
             elzinorelifestyle@gmail.com
           </a>
+          <a href="tel:01972921197" className="mt-2 block hover:underline">
+            01972921197
+          </a>
+          <a href="tel:01805428209" className="mt-2 block hover:underline">
+            01805428209
+          </a>
         </div>
       </div>
 

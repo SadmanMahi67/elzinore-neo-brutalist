@@ -5,6 +5,8 @@ export type Product = {
   name: string;
   price: number;
   priceLabel: string;
+  originalPrice?: number;
+  originalPriceLabel?: string;
   status: ProductStatus;
   images: string[];
   alt: string;
@@ -17,8 +19,10 @@ export const products: Product[] = [
   {
     id: "carbon-fiber-wallet",
     name: "Carbon Fiber RFID Wallet",
-    price: 1400,
-    priceLabel: "৳1,400",
+    price: 1449,
+    priceLabel: "৳1,449",
+    originalPrice: 1600,
+    originalPriceLabel: "৳1,600",
     status: "live",
     images: [
       "/images/wallet-hero.jpg",

@@ -69,6 +69,19 @@ async function runMigration() {
     );
   `;
 
+  console.log("Adding 'updated_at' column to 'orders' if it does not exist...");
+  await sql`
+    ALTER TABLE orders ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT now();
+  `;
+
+  console.log("Creating 'user_notification_state' table if it does not exist...");
+  await sql`
+    CREATE TABLE IF NOT EXISTS user_notification_state (
+      user_id TEXT PRIMARY KEY,
+      last_seen_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    );
+  `;
+
   console.log("Migration executed successfully!");
 }
 

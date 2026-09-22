@@ -64,6 +64,19 @@ export function ProductCard({
             <p className="mt-2 font-black">
               {live ? product.priceLabel : "Not for sale yet"}
             </p>
+            {live && product.originalPriceLabel && (
+              <div className="mt-1 flex flex-wrap items-center gap-2">
+                <span className="text-sm font-bold text-muted-foreground line-through">
+                  {product.originalPriceLabel}
+                </span>
+                <span className="border-2 border-border bg-accent px-2 py-0.5 text-xs font-black uppercase text-black">
+                  Limited offer
+                </span>
+                <span className="border-2 border-border bg-panel px-2 py-0.5 text-xs font-black uppercase text-foreground">
+                  Free Delivery
+                </span>
+              </div>
+            )}
             <span className="mt-3 inline-block border-4 border-border bg-panel px-3 py-1 font-black uppercase text-foreground">
               {live ? "Order now" : "Peek inside"}
             </span>

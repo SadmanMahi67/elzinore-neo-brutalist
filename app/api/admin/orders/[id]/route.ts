@@ -49,7 +49,7 @@ export async function PATCH(
     const sql = getDb();
     const updatedRows = await sql`
       UPDATE orders
-      SET status = ${rawStatus}
+      SET status = ${rawStatus}, updated_at = now()
       WHERE id = ${id}
       RETURNING id, status;
     `;

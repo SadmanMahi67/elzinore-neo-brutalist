@@ -249,7 +249,7 @@ export default function CheckoutPage() {
                   </Badge>
                 </div>
                 <p className="mt-3 text-sm font-bold">
-                  Pay with cash directly to the courier delivery agent when your order arrives. No online payment required.
+                  Pay with cash directly to the courier when your order arrives — no delivery charge, no hidden fees. You pay exactly what you see.
                 </p>
               </div>
             </div>
@@ -322,9 +322,11 @@ export default function CheckoutPage() {
               </div>
               <div className="flex justify-between items-center text-sm">
                 <span className="flex items-center gap-2">
-                  <Truck className="h-4 w-4" /> Shipping
+                  <Truck className="h-4 w-4" /> Delivery
                 </span>
-                <span className="font-black uppercase">Standard (COD)</span>
+                <span className="border-2 border-border bg-accent px-2 py-0.5 text-xs font-black uppercase text-black">
+                  Free (৳0)
+                </span>
               </div>
               <div className="border-t-4 border-border pt-3 flex justify-between font-grotesk text-2xl font-black uppercase">
                 <span>Total</span>

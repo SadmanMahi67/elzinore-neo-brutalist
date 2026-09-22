@@ -135,9 +135,24 @@ export function ProductModal() {
                 >
                   {product.name}
                 </h2>
-                <p className="mt-3 text-3xl font-black">
-                  {live ? product.priceLabel : "Coming soon"}
-                </p>
+                <div className="mt-3">
+                  <p className="text-3xl font-black">
+                    {live ? product.priceLabel : "Coming soon"}
+                  </p>
+                  {live && product.originalPriceLabel && (
+                    <div className="mt-2 flex flex-wrap items-center gap-2">
+                      <span className="text-lg font-bold text-muted-foreground line-through">
+                        {product.originalPriceLabel}
+                      </span>
+                      <span className="border-2 border-border bg-accent px-2 py-0.5 text-xs font-black uppercase text-black">
+                        Limited offer
+                      </span>
+                      <span className="border-2 border-border bg-panel px-2 py-0.5 text-xs font-black uppercase text-foreground">
+                        Free Delivery
+                      </span>
+                    </div>
+                  )}
+                </div>
                 <p className="mt-4 text-lg font-bold">{product.description}</p>
                 <ul className="mt-4 space-y-1 text-sm font-black uppercase">
                   {product.specs.map((s) => (

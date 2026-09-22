@@ -8,6 +8,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import { useCart } from "@/components/providers/CartProvider";
 import { ThemeToggle } from "@/components/shop/ThemeToggle";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { Button } from "@/components/ui/Button";
 
 const links = [
@@ -97,6 +98,7 @@ export function Nav() {
             </SignInButton>
           </SignedOut>
           <SignedIn>
+            <NotificationBell />
             <div className="hidden items-center md:flex">
               <UserButton
                 appearance={{
