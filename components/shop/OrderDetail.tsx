@@ -50,7 +50,12 @@ export function OrderDetail({
   onClose,
   className = "",
 }: OrderDetailProps) {
-  const displayId = order.shortId || order.orderId || order.id || "N/A";
+  const rawId = order.shortId || order.orderId || order.id || "";
+  const displayId = rawId.startsWith("ELZ-")
+    ? rawId
+    : rawId.length >= 8
+    ? `ELZ-${rawId.slice(0, 8).toUpperCase()}`
+    : rawId || "N/A";
   const rawStatus = (order.status || "placed").toLowerCase();
   const badgeClass = statusColor[rawStatus] || "bg-yellow text-black";
   const displayStatus = rawStatus.charAt(0).toUpperCase() + rawStatus.slice(1);

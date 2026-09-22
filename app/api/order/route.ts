@@ -136,6 +136,7 @@ export async function POST(req: Request) {
     return NextResponse.json(
       {
         orderId,
+        shortId: `ELZ-${orderId.slice(0, 8).toUpperCase()}`,
         totalAmount,
         status: "placed",
       },

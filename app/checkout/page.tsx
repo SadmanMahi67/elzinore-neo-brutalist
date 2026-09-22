@@ -13,6 +13,7 @@ import { formatBangladeshDateTime } from "@/lib/date";
 
 interface CompletedOrder {
   orderId: string;
+  shortId?: string;
   totalAmount: number;
   customerName: string;
   phone: string;
@@ -93,8 +94,12 @@ export default function CheckoutPage() {
       }
 
       // Order success snapshot
+      const shortId =
+        data.shortId || (data.orderId ? `ELZ-${data.orderId.slice(0, 8).toUpperCase()}` : undefined);
+
       setCompletedOrder({
         orderId: data.orderId,
+        shortId,
         totalAmount: data.totalAmount,
         customerName: trimmedName,
         phone: trimmedPhone,
