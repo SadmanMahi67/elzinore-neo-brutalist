@@ -9,6 +9,7 @@ import { formatTaka } from "@/lib/products";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { OrderDetail } from "@/components/shop/OrderDetail";
+import { ThankYouModal } from "@/components/shop/ThankYouModal";
 import { formatBangladeshDateTime } from "@/lib/date";
 
 interface CompletedOrder {
@@ -33,6 +34,7 @@ export default function CheckoutPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [completedOrder, setCompletedOrder] = useState<CompletedOrder | null>(null);
+  const [showThankYou, setShowThankYou] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -108,6 +110,7 @@ export default function CheckoutPage() {
         items: [...items],
       });
 
+      setShowThankYou(true);
       clearCart();
     } catch (err: any) {
       setError(err.message || "An unexpected error occurred. Please try again.");
@@ -121,6 +124,12 @@ export default function CheckoutPage() {
     return (
       <main className="grid-paper mx-auto max-w-4xl px-4 py-12 md:px-6 md:py-20">
         <OrderDetail order={completedOrder} mode="placed" />
+        <ThankYouModal
+          isOpen={showThankYou}
+          onClose={() => setShowThankYou(false)}
+          orderId={completedOrder.shortId || completedOrder.orderId}
+          totalAmount={completedOrder.totalAmount}
+        />
       </main>
     );
   }

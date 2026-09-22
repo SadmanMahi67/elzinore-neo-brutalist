@@ -11,6 +11,7 @@
   "dependencies": {
     "@clerk/nextjs": "^5.7.6",
     "@neondatabase/serverless": "^1.1.0",
+    "canvas-confetti": "^1.9.4",
     "framer-motion": "^11.15.0",
     "lucide-react": "^0.468.0",
     "next": "14.2.35",
@@ -19,6 +20,7 @@
     "react-fast-marquee": "^1.6.5"
   },
   "devDependencies": {
+    "@types/canvas-confetti": "^1.9.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
