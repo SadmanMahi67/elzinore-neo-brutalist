@@ -37,10 +37,10 @@ const STATUS_CONFIG: Record<
   string,
   { label: string; badgeColor: string; icon: any }
 > = {
-  placed: { label: "Placed", badgeColor: "bg-yellow", icon: Clock },
-  confirmed: { label: "Confirmed", badgeColor: "bg-violet", icon: Package },
-  delivered: { label: "Delivered", badgeColor: "bg-accent", icon: CheckCircle2 },
-  cancelled: { label: "Cancelled", badgeColor: "bg-panel text-foreground", icon: XCircle },
+  placed: { label: "Placed", badgeColor: "bg-yellow text-black", icon: Clock },
+  confirmed: { label: "Confirmed", badgeColor: "bg-blue-500 text-white", icon: Package },
+  delivered: { label: "Delivered", badgeColor: "bg-emerald-500 text-white", icon: CheckCircle2 },
+  cancelled: { label: "Cancelled", badgeColor: "bg-red-500 text-white", icon: XCircle },
 };
 
 const STATUS_TABS = [

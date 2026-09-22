@@ -10,14 +10,16 @@ import { Button } from "@/components/ui/Button";
 interface OrderDetailModalProps {
   orderId: string | null;
   onClose: () => void;
+  onOrderCancelled?: (orderId: string) => void;
 }
 
-export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
+export function OrderDetailModal({ orderId, onClose, onOrderCancelled }: OrderDetailModalProps) {
   const reduce = useReducedMotion();
   const dialogRef = useRef<HTMLDivElement>(null);
   const [order, setOrder] = useState<OrderDetailData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isCancelling, setIsCancelling] = useState(false);
 
   useEffect(() => {
     if (!orderId) {
@@ -56,6 +58,49 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
       active = false;
     };
   }, [orderId]);
+
+  const handleCancel = async () => {
+    if (!orderId) return;
+    if (
+      !window.confirm(
+        "Are you sure you want to cancel this order? This action cannot be undone."
+      )
+    ) {
+      return;
+    }
+
+    setIsCancelling(true);
+    try {
+      const res = await fetch(`/api/orders/${orderId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "cancel" }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to cancel order.");
+      }
+
+      // Update local order state
+      setOrder((prev) =>
+        prev
+          ? {
+              ...prev,
+              status: "Cancelled",
+            }
+          : null
+      );
+
+      if (onOrderCancelled) {
+        onOrderCancelled(orderId);
+      }
+    } catch (err: any) {
+      alert(err.message || "Failed to cancel order.");
+    } finally {
+      setIsCancelling(false);
+    }
+  };
 
   // Escape key & body scroll lock
   useEffect(() => {
@@ -147,7 +192,13 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
                 </div>
               </div>
             ) : order ? (
-              <OrderDetail order={order} mode="details" onClose={onClose} />
+              <OrderDetail
+                order={order}
+                mode="details"
+                onClose={onClose}
+                onCancel={handleCancel}
+                isCancelling={isCancelling}
+              />
             ) : null}
           </motion.div>
         </motion.div>

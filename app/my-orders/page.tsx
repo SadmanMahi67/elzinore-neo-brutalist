@@ -27,12 +27,12 @@ interface OrderRecord {
 }
 
 const statusColor: Record<string, string> = {
-  Placed: "bg-yellow",
-  Delivered: "bg-accent",
-  Processing: "bg-violet",
-  Shipped: "bg-violet",
-  Confirmed: "bg-violet",
-  Cancelled: "bg-panel text-foreground",
+  Placed: "bg-yellow text-black",
+  Confirmed: "bg-blue-500 text-white",
+  Delivered: "bg-emerald-500 text-white",
+  Cancelled: "bg-red-500 text-white",
+  Processing: "bg-blue-500 text-white",
+  Shipped: "bg-blue-500 text-white",
 };
 
 export default function MyOrdersPage() {
@@ -41,6 +41,43 @@ export default function MyOrdersPage() {
   const [orders, setOrders] = useState<OrderRecord[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  const [cancellingId, setCancellingId] = useState<string | null>(null);
+
+  const handleCancelOrder = async (orderId: string) => {
+    if (
+      !window.confirm(
+        "Are you sure you want to cancel this order? This action cannot be undone."
+      )
+    ) {
+      return;
+    }
+
+    setCancellingId(orderId);
+    try {
+      const res = await fetch(`/api/orders/${orderId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "cancel" }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to cancel order.");
+      }
+
+      setOrders((prev) =>
+        prev.map((o) =>
+          o.rawId === orderId || o.id === orderId
+            ? { ...o, status: "Cancelled" }
+            : o
+        )
+      );
+    } catch (err: any) {
+      alert(err.message || "Failed to cancel order.");
+    } finally {
+      setCancellingId(null);
+    }
+  };
 
   useEffect(() => {
     if (!isLoaded || !isSignedIn) {
@@ -253,7 +290,7 @@ export default function MyOrdersPage() {
                   </div>
                   <Badge
                     rotate={0}
-                    className={`${statusColor[order.status] ?? "bg-violet"} text-black`}
+                    className={`${statusColor[order.status] ?? "bg-blue-500 text-white"} text-xs font-black`}
                   >
                     {order.status}
                   </Badge>
@@ -275,10 +312,25 @@ export default function MyOrdersPage() {
 
                 <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t-2 border-border/20 pt-3 text-sm font-bold">
                   <p>Delivery: {order.city}</p>
-                  <div className="flex items-center gap-4">
+                  <div className="flex flex-wrap items-center gap-3">
                     <p className="text-base font-black">
                       Total: {formatTaka(order.totalAmount)}
                     </p>
+                    {order.status?.toLowerCase() === "placed" && (
+                      <button
+                        type="button"
+                        disabled={cancellingId === (order.rawId || order.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleCancelOrder(order.rawId || order.id);
+                        }}
+                        className="border-2 border-border bg-red-500 px-3 py-1 font-grotesk text-xs font-black uppercase text-white shadow-brutal transition-all duration-100 hover:bg-red-600 active:translate-x-[1px] active:translate-y-[1px] active:shadow-none disabled:opacity-50"
+                      >
+                        {cancellingId === (order.rawId || order.id)
+                          ? "Cancelling..."
+                          : "Cancel Order"}
+                      </button>
+                    )}
                     <span className="inline-flex items-center gap-1 font-grotesk text-xs font-black uppercase tracking-tight text-accent group-hover:underline">
                       View Details <ArrowUpRight size={14} strokeWidth={3} />
                     </span>
@@ -294,6 +346,13 @@ export default function MyOrdersPage() {
       <OrderDetailModal
         orderId={selectedOrderId}
         onClose={() => setSelectedOrderId(null)}
+        onOrderCancelled={(id) => {
+          setOrders((prev) =>
+            prev.map((o) =>
+              o.rawId === id || o.id === id ? { ...o, status: "Cancelled" } : o
+            )
+          );
+        }}
       />
     </main>
   );

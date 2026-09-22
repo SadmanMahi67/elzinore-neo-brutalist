@@ -95,3 +95,96 @@ export async function GET(
     );
   }
 }
+
+export async function PATCH(
+  req: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    let userId: string | null = null;
+    try {
+      const authResult = auth();
+      userId = authResult?.userId ?? null;
+    } catch {
+      userId = null;
+    }
+
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { id } = params;
+
+    if (!id || !UUID_REGEX.test(id)) {
+      return NextResponse.json({ error: "Order not found." }, { status: 404 });
+    }
+
+    const body = await req.json().catch(() => ({}));
+    const action = body?.action;
+
+    if (action !== "cancel") {
+      return NextResponse.json({ error: "Invalid action." }, { status: 400 });
+    }
+
+    const sql = getDb();
+
+    // Ownership & current status check
+    const orders = await sql`
+      SELECT id, status, user_id
+      FROM orders
+      WHERE id = ${id} AND user_id = ${userId}
+      LIMIT 1;
+    `;
+
+    if (orders.length === 0) {
+      return NextResponse.json({ error: "Order not found." }, { status: 404 });
+    }
+
+    const currentStatus = (orders[0].status || "").toLowerCase();
+
+    // Strictly enforce: users can ONLY cancel while status is 'placed'
+    if (currentStatus !== "placed") {
+      return NextResponse.json(
+        {
+          error:
+            currentStatus === "cancelled"
+              ? "This order has already been cancelled."
+              : "Orders cannot be cancelled once they have been confirmed or processed.",
+        },
+        { status: 400 }
+      );
+    }
+
+    const updatedRows = await sql`
+      UPDATE orders
+      SET status = 'cancelled', updated_at = now()
+      WHERE id = ${id} AND user_id = ${userId} AND status = 'placed'
+      RETURNING id, status;
+    `;
+
+    if (updatedRows.length === 0) {
+      return NextResponse.json(
+        { error: "Order could not be cancelled. It may have already been updated." },
+        { status: 400 }
+      );
+    }
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Order has been cancelled successfully.",
+        order: {
+          id: updatedRows[0].id,
+          status: "Cancelled",
+        },
+      },
+      { status: 200 }
+    );
+  } catch (error: any) {
+    console.error("PATCH /api/orders/[id] cancel error:", error);
+    return NextResponse.json(
+      { error: error.message || "Failed to cancel order." },
+      { status: 500 }
+    );
+  }
+}

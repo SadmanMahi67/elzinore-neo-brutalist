@@ -15,9 +15,10 @@ interface NotificationItem {
 }
 
 const statusColor: Record<string, string> = {
-  confirmed: "bg-violet text-black",
-  delivered: "bg-accent text-black",
-  cancelled: "bg-panel text-foreground",
+  placed: "bg-yellow text-black",
+  confirmed: "bg-blue-500 text-white",
+  delivered: "bg-emerald-500 text-white",
+  cancelled: "bg-red-500 text-white",
 };
 
 export function NotificationBell() {

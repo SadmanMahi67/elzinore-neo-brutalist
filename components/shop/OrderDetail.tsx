@@ -32,15 +32,17 @@ export interface OrderDetailData {
 
 const statusColor: Record<string, string> = {
   placed: "bg-yellow text-black",
-  confirmed: "bg-violet text-black",
-  delivered: "bg-accent text-black",
-  cancelled: "bg-panel text-foreground",
+  confirmed: "bg-blue-500 text-white",
+  delivered: "bg-emerald-500 text-white",
+  cancelled: "bg-red-500 text-white",
 };
 
 interface OrderDetailProps {
   order: OrderDetailData;
   mode?: "placed" | "details";
   onClose?: () => void;
+  onCancel?: () => void | Promise<void>;
+  isCancelling?: boolean;
   className?: string;
 }
 
@@ -48,6 +50,8 @@ export function OrderDetail({
   order,
   mode = "placed",
   onClose,
+  onCancel,
+  isCancelling = false,
   className = "",
 }: OrderDetailProps) {
   const rawId = order.shortId || order.orderId || order.id || "";
@@ -223,6 +227,16 @@ export function OrderDetail({
           </>
         ) : (
           <>
+            {onCancel && rawStatus === "placed" && (
+              <button
+                type="button"
+                disabled={isCancelling}
+                onClick={onCancel}
+                className="border-4 border-border bg-red-500 px-6 py-3 font-grotesk text-base font-black uppercase text-white shadow-brutal transition-all duration-100 ease-out hover:-translate-y-0.5 hover:shadow-brutal-md active:translate-x-[2px] active:translate-y-[2px] active:shadow-none disabled:opacity-50"
+              >
+                {isCancelling ? "Cancelling..." : "Cancel Order"}
+              </button>
+            )}
             {onClose && (
               <Button onClick={onClose} variant="primary" size="lg">
                 Close Details
