@@ -27,12 +27,12 @@ interface OrderRecord {
 }
 
 const statusColor: Record<string, string> = {
-  Placed: "bg-yellow text-black",
-  Confirmed: "bg-blue-500 text-white",
-  Delivered: "bg-emerald-500 text-white",
-  Cancelled: "bg-red-500 text-white",
-  Processing: "bg-blue-500 text-white",
-  Shipped: "bg-blue-500 text-white",
+  placed: "bg-yellow text-black",
+  confirmed: "bg-blue-500 text-white",
+  delivered: "bg-emerald-500 text-white",
+  cancelled: "bg-red-500 text-white",
+  processing: "bg-blue-500 text-white",
+  shipped: "bg-blue-500 text-white",
 };
 
 export default function MyOrdersPage() {
@@ -290,7 +290,7 @@ export default function MyOrdersPage() {
                   </div>
                   <Badge
                     rotate={0}
-                    className={`${statusColor[order.status] ?? "bg-blue-500 text-white"} text-xs font-black`}
+                    className={`${statusColor[(order.status || "placed").toLowerCase()] ?? "bg-yellow text-black"} text-xs font-black`}
                   >
                     {order.status}
                   </Badge>

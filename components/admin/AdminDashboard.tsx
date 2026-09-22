@@ -286,7 +286,8 @@ export function AdminDashboard({ adminEmail }: { adminEmail?: string }) {
                   </thead>
                   <tbody className="divide-y-4 divide-border font-bold">
                     {orders.map((order) => {
-                      const cfg = STATUS_CONFIG[order.status] || STATUS_CONFIG.placed;
+                      const statusKey = (order.status || "placed").toLowerCase();
+                      const cfg = STATUS_CONFIG[statusKey] || STATUS_CONFIG.placed;
                       return (
                         <tr key={order.id} className="hover:bg-foreground/5">
                           <td className="p-4 align-top">
@@ -330,7 +331,7 @@ export function AdminDashboard({ adminEmail }: { adminEmail?: string }) {
                             <div className="space-y-2">
                               <Badge
                                 rotate={0}
-                                className={`${cfg.badgeColor} text-black text-xs font-black`}
+                                className={`${cfg.badgeColor} text-xs font-black`}
                               >
                                 {cfg.label}
                               </Badge>
@@ -360,7 +361,8 @@ export function AdminDashboard({ adminEmail }: { adminEmail?: string }) {
               {/* Mobile / Tablet Cards */}
               <div className="space-y-4 lg:hidden">
                 {orders.map((order) => {
-                  const cfg = STATUS_CONFIG[order.status] || STATUS_CONFIG.placed;
+                  const statusKey = (order.status || "placed").toLowerCase();
+                  const cfg = STATUS_CONFIG[statusKey] || STATUS_CONFIG.placed;
                   return (
                     <div
                       key={order.id}
@@ -371,7 +373,7 @@ export function AdminDashboard({ adminEmail }: { adminEmail?: string }) {
                           <p className="font-grotesk text-xl font-black">{order.shortId}</p>
                           <p className="text-xs text-foreground/70">{order.date}</p>
                         </div>
-                        <Badge rotate={0} className={`${cfg.badgeColor} text-black font-black`}>
+                        <Badge rotate={0} className={`${cfg.badgeColor} font-black`}>
                           {cfg.label}
                         </Badge>
                       </div>
