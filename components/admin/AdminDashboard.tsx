@@ -12,7 +12,9 @@ import {
   CheckCircle2,
   AlertTriangle,
   XCircle,
-  Truck,
+  Trash2,
+  X,
+  AlertOctagon,
 } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { formatTaka } from "@/lib/products";
@@ -61,6 +63,17 @@ export function AdminDashboard({ adminEmail }: { adminEmail?: string }) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
+  // Selection & Deletion State
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<{
+    type: "single" | "bulk";
+    orders: AdminOrder[];
+  } | null>(null);
+  const [deleteInputText, setDeleteInputText] = useState("");
+  const [deleting, setDeleting] = useState(false);
+  const [modalError, setModalError] = useState<string | null>(null);
+
   // Debounce search input by 350ms
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const handleSearchChange = (val: string) => {
@@ -88,6 +101,8 @@ export function AdminDashboard({ adminEmail }: { adminEmail?: string }) {
       }
       const data = await res.json();
       setOrders(data.orders || []);
+      // Clear selection when order list refetches/changes
+      setSelectedIds([]);
     } catch (err: any) {
       setErrorMessage(err.message || "Failed to fetch orders.");
     } finally {
@@ -138,10 +153,95 @@ export function AdminDashboard({ adminEmail }: { adminEmail?: string }) {
     }
   };
 
+  // Selection handlers
+  const handleToggleSelectAll = () => {
+    if (selectedIds.length === orders.length && orders.length > 0) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(orders.map((o) => o.id));
+    }
+  };
+
+  const handleToggleSelectRow = (id: string) => {
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
+  };
+
+  // Open Delete Modal for Single Order
+  const openSingleDelete = (order: AdminOrder) => {
+    setDeleteTarget({ type: "single", orders: [order] });
+    setDeleteInputText("");
+    setModalError(null);
+    setDeleteModalOpen(true);
+  };
+
+  // Open Delete Modal for Bulk Selection
+  const openBulkDelete = () => {
+    const selectedOrders = orders.filter((o) => selectedIds.includes(o.id));
+    if (selectedOrders.length === 0) return;
+
+    setDeleteTarget({ type: "bulk", orders: selectedOrders });
+    setDeleteInputText("");
+    setModalError(null);
+    setDeleteModalOpen(true);
+  };
+
+  // Check if target contains any real sales orders (confirmed or delivered)
+  const hasRealSales = deleteTarget?.orders.some(
+    (o) => o.status === "confirmed" || o.status === "delivered"
+  );
+
+  // Execute Deletion
+  const confirmDeletion = async () => {
+    if (!deleteTarget) return;
+
+    setDeleting(true);
+    setModalError(null);
+
+    try {
+      if (deleteTarget.type === "single") {
+        const orderId = deleteTarget.orders[0].id;
+        const res = await fetch(`/api/admin/orders/${orderId}`, {
+          method: "DELETE",
+        });
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(data.error || "Failed to delete order");
+        }
+        setSuccessMessage(`Order ${deleteTarget.orders[0].shortId} permanently deleted.`);
+      } else {
+        const ids = deleteTarget.orders.map((o) => o.id);
+        const res = await fetch(`/api/admin/orders/bulk-delete`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ids }),
+        });
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(data.error || "Failed to delete orders");
+        }
+        const data = await res.json();
+        const count = data.deletedIds?.length || ids.length;
+        setSuccessMessage(`${count} order(s) permanently deleted.`);
+      }
+
+      setTimeout(() => setSuccessMessage(null), 4000);
+      setDeleteModalOpen(false);
+      setDeleteTarget(null);
+      fetchOrders();
+    } catch (err: any) {
+      setModalError(err.message || "Deletion failed.");
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   const totalRevenue = orders.reduce((sum, o) => sum + (o.status !== "cancelled" ? o.totalAmount : 0), 0);
+  const isAllSelected = orders.length > 0 && selectedIds.length === orders.length;
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen bg-background pb-28">
       {/* Top Admin Header */}
       <header className="border-b-4 border-border bg-panel">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-4 py-4 md:px-6">
@@ -276,20 +376,45 @@ export function AdminDashboard({ adminEmail }: { adminEmail?: string }) {
                 <table className="w-full text-left text-sm">
                   <thead className="border-b-4 border-border bg-yellow font-grotesk font-black uppercase text-black">
                     <tr>
+                      <th className="p-4 w-12 text-center">
+                        <input
+                          type="checkbox"
+                          checked={isAllSelected}
+                          onChange={handleToggleSelectAll}
+                          className="h-4 w-4 cursor-pointer accent-black border-2 border-black"
+                          title="Select all displayed orders"
+                        />
+                      </th>
                       <th className="p-4">Order ID & Date</th>
                       <th className="p-4">Customer Info</th>
                       <th className="p-4">Delivery Address</th>
                       <th className="p-4">Items</th>
                       <th className="p-4">Total</th>
                       <th className="p-4">Status & Control</th>
+                      <th className="p-4 text-center">Delete</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y-4 divide-border font-bold">
                     {orders.map((order) => {
                       const statusKey = (order.status || "placed").toLowerCase();
                       const cfg = STATUS_CONFIG[statusKey] || STATUS_CONFIG.placed;
+                      const isSelected = selectedIds.includes(order.id);
+
                       return (
-                        <tr key={order.id} className="hover:bg-foreground/5">
+                        <tr
+                          key={order.id}
+                          className={`transition-colors ${
+                            isSelected ? "bg-yellow/20" : "hover:bg-foreground/5"
+                          }`}
+                        >
+                          <td className="p-4 align-top text-center">
+                            <input
+                              type="checkbox"
+                              checked={isSelected}
+                              onChange={() => handleToggleSelectRow(order.id)}
+                              className="h-4 w-4 cursor-pointer accent-black border-2 border-black mt-1"
+                            />
+                          </td>
                           <td className="p-4 align-top">
                             <p className="font-grotesk text-base font-black tracking-tight">{order.shortId}</p>
                             <p className="mt-1 text-xs text-foreground/70">{order.date}</p>
@@ -351,6 +476,16 @@ export function AdminDashboard({ adminEmail }: { adminEmail?: string }) {
                               </select>
                             </div>
                           </td>
+                          <td className="p-4 align-top text-center">
+                            <button
+                              type="button"
+                              onClick={() => openSingleDelete(order)}
+                              className="inline-flex items-center justify-center border-2 border-border bg-accent p-2 text-black shadow-brutal transition-all hover:bg-red-600 hover:text-white active:translate-x-[1px] active:translate-y-[1px] active:shadow-none"
+                              title="Delete this order"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </td>
                         </tr>
                       );
                     })}
@@ -363,15 +498,27 @@ export function AdminDashboard({ adminEmail }: { adminEmail?: string }) {
                 {orders.map((order) => {
                   const statusKey = (order.status || "placed").toLowerCase();
                   const cfg = STATUS_CONFIG[statusKey] || STATUS_CONFIG.placed;
+                  const isSelected = selectedIds.includes(order.id);
+
                   return (
                     <div
                       key={order.id}
-                      className="border-4 border-border bg-panel p-5 shadow-brutal-md"
+                      className={`border-4 border-border bg-panel p-5 shadow-brutal-md transition-colors ${
+                        isSelected ? "bg-yellow/10" : ""
+                      }`}
                     >
                       <div className="flex flex-wrap items-start justify-between gap-2 border-b-2 border-border pb-3">
-                        <div>
-                          <p className="font-grotesk text-xl font-black">{order.shortId}</p>
-                          <p className="text-xs text-foreground/70">{order.date}</p>
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={() => handleToggleSelectRow(order.id)}
+                            className="h-5 w-5 cursor-pointer accent-black border-2 border-black"
+                          />
+                          <div>
+                            <p className="font-grotesk text-xl font-black">{order.shortId}</p>
+                            <p className="text-xs text-foreground/70">{order.date}</p>
+                          </div>
                         </div>
                         <Badge rotate={0} className={`${cfg.badgeColor} font-black`}>
                           {cfg.label}
@@ -405,23 +552,33 @@ export function AdminDashboard({ adminEmail }: { adminEmail?: string }) {
                         </div>
                       </div>
 
-                      <div className="mt-4 border-t-4 border-border pt-4">
-                        <label className="block text-xs font-black uppercase text-foreground/70 mb-1">
-                          Update Order Status
-                        </label>
-                        <select
-                          value={order.status}
-                          disabled={updatingId === order.id}
-                          onChange={(e) =>
-                            handleStatusChange(order.id, e.target.value as AdminOrder["status"])
-                          }
-                          className="w-full border-4 border-border bg-panel p-2 font-grotesk text-sm font-black uppercase shadow-brutal focus:outline-none"
+                      <div className="mt-4 flex items-center justify-between gap-3 border-t-4 border-border pt-4">
+                        <div className="flex-1">
+                          <label className="block text-[10px] font-black uppercase text-foreground/70 mb-1">
+                            Update Order Status
+                          </label>
+                          <select
+                            value={order.status}
+                            disabled={updatingId === order.id}
+                            onChange={(e) =>
+                              handleStatusChange(order.id, e.target.value as AdminOrder["status"])
+                            }
+                            className="w-full border-2 border-border bg-panel p-2 font-grotesk text-xs font-black uppercase shadow-brutal focus:outline-none"
+                          >
+                            <option value="placed">Placed</option>
+                            <option value="confirmed">Confirmed</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="cancelled">Cancelled</option>
+                          </select>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => openSingleDelete(order)}
+                          className="flex h-10 items-center justify-center gap-1.5 border-2 border-border bg-accent px-3 py-2 font-grotesk text-xs font-black uppercase text-black shadow-brutal hover:bg-red-600 hover:text-white"
                         >
-                          <option value="placed">Placed</option>
-                          <option value="confirmed">Confirmed</option>
-                          <option value="delivered">Delivered</option>
-                          <option value="cancelled">Cancelled</option>
-                        </select>
+                          <Trash2 size={14} />
+                          <span>Delete</span>
+                        </button>
                       </div>
                     </div>
                   );
@@ -431,6 +588,140 @@ export function AdminDashboard({ adminEmail }: { adminEmail?: string }) {
           )}
         </section>
       </main>
+
+      {/* Sticky Bulk Action Bar */}
+      {selectedIds.length > 0 && (
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 flex w-[92%] max-w-2xl items-center justify-between border-4 border-border bg-yellow px-5 py-3.5 font-grotesk text-black shadow-brutal-md">
+          <div className="flex items-center gap-3">
+            <span className="border-2 border-black bg-panel px-2.5 py-1 text-sm font-black">
+              {selectedIds.length} SELECTED
+            </span>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setSelectedIds([])}
+              className="border-2 border-black bg-panel px-3 py-1.5 text-xs font-black uppercase hover:bg-black hover:text-white"
+            >
+              Clear Selection
+            </button>
+            <button
+              type="button"
+              onClick={openBulkDelete}
+              className="flex items-center gap-2 border-2 border-black bg-accent px-4 py-1.5 text-xs font-black uppercase text-black shadow-brutal hover:bg-red-600 hover:text-white"
+            >
+              <Trash2 size={14} />
+              <span>Delete Selected</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteModalOpen && deleteTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-lg border-4 border-border bg-panel p-6 shadow-brutal-md font-grotesk animate-in fade-in zoom-in-95">
+            <div className="flex items-start justify-between border-b-4 border-border pb-4">
+              <div className="flex items-center gap-3 text-accent">
+                <AlertOctagon size={28} />
+                <h2 className="text-2xl font-black uppercase tracking-tight text-foreground">
+                  Confirm Permanent Delete
+                </h2>
+              </div>
+              <button
+                type="button"
+                onClick={() => setDeleteModalOpen(false)}
+                disabled={deleting}
+                className="border-2 border-border bg-panel p-1 text-foreground hover:bg-yellow hover:text-black"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="mt-4 space-y-4">
+              {modalError && (
+                <div className="border-2 border-border bg-accent p-3 text-xs font-black text-black">
+                  {modalError}
+                </div>
+              )}
+
+              {/* Modal Target Preview */}
+              {deleteTarget.type === "single" ? (
+                <div className="border-2 border-border bg-foreground/5 p-3 text-sm">
+                  <p className="font-black text-base">
+                    Order {deleteTarget.orders[0].shortId}
+                  </p>
+                  <p className="mt-1 font-bold text-foreground/80">
+                    Customer: <span className="font-black text-foreground">{deleteTarget.orders[0].customerName}</span> ({deleteTarget.orders[0].phone})
+                  </p>
+                  <p className="mt-1 font-bold text-foreground/80">
+                    Status: <span className="font-black uppercase">{deleteTarget.orders[0].status}</span>
+                  </p>
+                </div>
+              ) : (
+                <div className="border-2 border-border bg-foreground/5 p-3 text-sm">
+                  <p className="font-black text-base">
+                    Deleting {deleteTarget.orders.length} Selected Orders
+                  </p>
+                  <p className="mt-1 font-bold text-xs text-foreground/80">
+                    {deleteTarget.orders.slice(0, 3).map((o) => o.shortId).join(", ")}
+                    {deleteTarget.orders.length > 3 && ` and ${deleteTarget.orders.length - 3} more`}
+                  </p>
+                </div>
+              )}
+
+              <p className="font-bold text-sm text-foreground/90">
+                This permanently deletes the order and its items from the database. This action cannot be undone.
+              </p>
+
+              {/* Extra Friction Warning for Confirmed or Delivered Orders */}
+              {hasRealSales && (
+                <div className="border-4 border-border bg-accent p-4 text-black shadow-brutal space-y-2">
+                  <p className="font-black text-sm uppercase flex items-center gap-2">
+                    <AlertTriangle size={18} />
+                    <span>Warning: Contains Real Sales Records</span>
+                  </p>
+                  <p className="text-xs font-bold">
+                    One or more selected orders have status <span className="font-black uppercase">Confirmed</span> or <span className="font-black uppercase">Delivered</span>. Deleting real orders alters sales history.
+                  </p>
+                  <p className="text-xs font-black pt-1">
+                    To confirm deletion, type <span className="underline font-mono bg-black text-white px-1">DELETE</span> below:
+                  </p>
+                  <input
+                    type="text"
+                    value={deleteInputText}
+                    onChange={(e) => setDeleteInputText(e.target.value)}
+                    placeholder="Type DELETE to enable button"
+                    className="w-full border-2 border-black bg-panel p-2 text-xs font-mono font-bold uppercase text-foreground focus:outline-none"
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Modal Actions */}
+            <div className="mt-6 flex items-center justify-end gap-3 border-t-4 border-border pt-4">
+              <button
+                type="button"
+                onClick={() => setDeleteModalOpen(false)}
+                disabled={deleting}
+                className="border-2 border-border bg-panel px-4 py-2 text-xs font-black uppercase text-foreground shadow-brutal hover:bg-yellow hover:text-black active:translate-x-[1px] active:translate-y-[1px] active:shadow-none disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={confirmDeletion}
+                disabled={deleting || (hasRealSales && deleteInputText.trim() !== "DELETE")}
+                className="flex items-center gap-2 border-2 border-border bg-accent px-5 py-2 text-xs font-black uppercase text-black shadow-brutal hover:bg-red-600 hover:text-white active:translate-x-[1px] active:translate-y-[1px] active:shadow-none disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                {deleting && <RefreshCw size={14} className="animate-spin" />}
+                <span>{deleting ? "Deleting..." : "Permanently Delete"}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

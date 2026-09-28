@@ -79,3 +79,56 @@ export async function PATCH(
     );
   }
 }
+
+export async function DELETE(
+  req: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const adminCheck = await checkIsAdmin();
+    if (!adminCheck.authorized) {
+      const statusCode = adminCheck.reason === "unauthenticated" ? 401 : 403;
+      return NextResponse.json(
+        { error: adminCheck.reason === "unauthenticated" ? "Authentication required." : "Not authorized." },
+        { status: statusCode }
+      );
+    }
+
+    const { id } = params;
+
+    if (!id || !UUID_REGEX.test(id)) {
+      return NextResponse.json(
+        { error: "Invalid order ID format. Expected a valid UUID." },
+        { status: 400 }
+      );
+    }
+
+    const sql = getDb();
+    const deletedRows = await sql`
+      DELETE FROM orders
+      WHERE id = ${id}
+      RETURNING id;
+    `;
+
+    if (deletedRows.length === 0) {
+      return NextResponse.json(
+        { error: `Order not found with ID: ${id}` },
+        { status: 404 }
+      );
+    }
+
+    const adminEmail = adminCheck.email || "admin";
+    console.log(`[ADMIN DELETE] Admin: ${adminEmail}, Orders: ${id}, Timestamp: ${new Date().toISOString()}`);
+
+    return NextResponse.json(
+      { deletedId: deletedRows[0].id },
+      { status: 200 }
+    );
+  } catch (error: any) {
+    console.error("DELETE /api/admin/orders/[id] error:", error);
+    return NextResponse.json(
+      { error: "Failed to delete order." },
+      { status: 500 }
+    );
+  }
+}
