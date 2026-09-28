@@ -6,7 +6,7 @@ import { Nav } from "@/components/sections/Nav";
 import { Providers } from "@/components/providers/Providers";
 import { CartDrawer } from "@/components/shop/CartDrawer";
 import { ProductModal } from "@/components/shop/ProductModal";
-import { THEME_STORAGE_KEY } from "@/lib/constants";
+import { THEME_STORAGE_KEY, SITE_URL } from "@/lib/constants";
 import "./globals.css";
 
 const grotesk = Space_Grotesk({
@@ -16,6 +16,7 @@ const grotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "Elzinore — Carbon Fiber RFID Wallet",
     template: "%s — Elzinore",

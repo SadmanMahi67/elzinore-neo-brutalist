@@ -7,6 +7,10 @@ export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Admin Portal — Elzinore",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default async function AdminPage() {
