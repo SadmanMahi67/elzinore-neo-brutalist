@@ -18,11 +18,35 @@ const grotesk = Space_Grotesk({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Elzinore — Carbon Fiber RFID Wallet",
+    default: "Elzinore — Carbon Fiber RFID Wallet | Bangladesh",
     template: "%s — Elzinore",
   },
   description:
     "Premium men's accessories from Bangladesh. Launching with a slim carbon fiber RFID-blocking wallet.",
+  openGraph: {
+    type: "website",
+    locale: "en_BD",
+    url: SITE_URL,
+    siteName: "Elzinore",
+    title: "Elzinore — Carbon Fiber RFID Wallet | Bangladesh",
+    description:
+      "Minimalist carbon fiber pop-up wallets engineered for everyday carry in Bangladesh. Nationwide Cash on Delivery.",
+    images: [
+      {
+        url: "/images/wallet-hero.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Elzinore Carbon Fiber RFID Wallet",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Elzinore — Carbon Fiber RFID Wallet | Bangladesh",
+    description:
+      "Minimalist carbon fiber pop-up wallets engineered for everyday carry in Bangladesh. Nationwide Cash on Delivery.",
+    images: ["/images/wallet-hero.jpg"],
+  },
 };
 
 const themeScript = `

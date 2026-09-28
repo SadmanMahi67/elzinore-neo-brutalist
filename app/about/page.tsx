@@ -1,11 +1,36 @@
+import type { Metadata } from "next";
 import { AboutTimeline } from "@/components/sections/AboutTimeline";
 import { Testimonials } from "@/components/sections/Testimonials";
 import { TrustStrip } from "@/components/sections/TrustStrip";
 
-export const metadata = {
-  title: "About Us",
+export const metadata: Metadata = {
+  title: "Our Story — Crafted in Bangladesh",
   description:
-    "Four people in Bangladesh, one wallet, and a rule: finish the first product before the second.",
+    "Four people in Bangladesh tired of bulky leather bricks. Obsessing over one carbon fiber pop-up wallet before chasing the next SKU.",
+  alternates: {
+    canonical: "/about",
+  },
+  openGraph: {
+    title: "Our Story — Crafted in Bangladesh — Elzinore",
+    description:
+      "Four people in Bangladesh tired of bulky leather bricks. Obsessing over one carbon fiber pop-up wallet before chasing the next SKU.",
+    url: "/about",
+    images: [
+      {
+        url: "/images/wallet-hero.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Elzinore Story",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Our Story — Crafted in Bangladesh — Elzinore",
+    description:
+      "Four people in Bangladesh tired of bulky leather bricks. Obsessing over one carbon fiber pop-up wallet before chasing the next SKU.",
+    images: ["/images/wallet-hero.jpg"],
+  },
 };
 
 export default function AboutPage() {
@@ -18,14 +43,13 @@ export default function AboutPage() {
         <p className="mt-6 text-lg font-bold md:text-xl">
           Elzinore started because four of us were tired of fat leather bricks and even more tired of brands that launch twelve SKUs on day one. We put savings together in Bangladesh, opened too many Alibaba tabs, and argued about RFID sleeves until one carbon fiber sample felt like ours.
         </p>
-        <p className="mt-4 text-lg font-bold md:text-xl">
-          Sourcing from overseas as a small team means we move slower than a catalogue site. That is the point. We wanted a pocket wallet that survives a Dhaka commute, blocks casual card skims, and looks like it belongs next to a decent watch.
+
+        <p className="mt-4 font-bold text-foreground/80 md:text-lg">
+          We test every clasp on Dhaka roads. If a wallet pops open in a CNG or slips out of a lungi pocket, we do not ship it. No investor pressure to do six product lines this quarter — just the one piece, built to last, priced fairly in taka.
         </p>
-        <p className="mt-4 text-lg font-bold md:text-xl">
-          Belts and a leather imprinting machine are in the plan. They are not in the shop yet because we have not earned them.
-        </p>
-        <AboutTimeline />
       </article>
+
+      <AboutTimeline />
       <TrustStrip />
       <Testimonials />
     </main>
