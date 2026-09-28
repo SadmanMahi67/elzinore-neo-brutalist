@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { CheckCircle2, AlertTriangle, Truck, Package, ArrowRight } from "lucide-react";
+import { CheckCircle2, AlertTriangle, Truck, Package, ArrowRight, Copy, Check } from "lucide-react";
 import { useCart, CartLine } from "@/components/providers/CartProvider";
 import { formatTaka } from "@/lib/products";
 import { Button } from "@/components/ui/Button";
@@ -19,6 +19,8 @@ interface CompletedOrder {
   customerName: string;
   phone: string;
   address: string;
+  paymentMethod?: string;
+  bkashTrxId?: string;
   date?: string;
   items: CartLine[];
 }
@@ -30,12 +32,21 @@ export default function CheckoutPage() {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState<"cod" | "bkash">("cod");
+  const [bkashTrxId, setBkashTrxId] = useState("");
+  const [copiedNumber, setCopiedNumber] = useState(false);
   const [hpWebsite, setHpWebsite] = useState("");
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [completedOrder, setCompletedOrder] = useState<CompletedOrder | null>(null);
   const [showThankYou, setShowThankYou] = useState(false);
+
+  const handleCopyNumber = () => {
+    navigator.clipboard.writeText("01805428209");
+    setCopiedNumber(true);
+    setTimeout(() => setCopiedNumber(false), 2500);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,6 +81,15 @@ export default function CheckoutPage() {
       return;
     }
 
+    // bKash specific validation
+    const trimmedTrx = bkashTrxId.trim();
+    if (paymentMethod === "bkash") {
+      if (!trimmedTrx || trimmedTrx.length < 6 || trimmedTrx.length > 40) {
+        setError("Please enter your bKash Transaction ID (TrxID) from your Send Money confirmation.");
+        return;
+      }
+    }
+
     if (items.length === 0) {
       setError("Your cart is empty.");
       return;
@@ -92,6 +112,8 @@ export default function CheckoutPage() {
           phone: normalizedPhone,
           email: email.trim(),
           address: trimmedAddress,
+          payment_method: paymentMethod,
+          bkash_trx_id: paymentMethod === "bkash" ? trimmedTrx : null,
           website_url: hpWebsite,
           items: items.map((l) => ({
             productId: l.id,
@@ -117,6 +139,8 @@ export default function CheckoutPage() {
         customerName: trimmedName,
         phone: normalizedPhone,
         address: trimmedAddress,
+        paymentMethod: paymentMethod,
+        bkashTrxId: paymentMethod === "bkash" ? trimmedTrx : undefined,
         date: formatBangladeshDateTime(new Date()),
         items: [...items],
       });
@@ -174,7 +198,7 @@ export default function CheckoutPage() {
           Checkout
         </h1>
         <p className="mt-3 max-w-xl text-lg font-bold text-muted-foreground">
-          Enter your delivery details. Cash on Delivery nationwide across Bangladesh.
+          Enter your delivery details. Cash on Delivery or bKash nationwide across Bangladesh.
         </p>
       </div>
 
@@ -284,23 +308,130 @@ export default function CheckoutPage() {
                 2. Payment Method
               </h2>
 
-              <div className="mt-6 border-4 border-border bg-yellow/30 p-5 shadow-brutal">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-6 w-6 items-center justify-center rounded-full border-4 border-border bg-foreground">
-                      <div className="h-2 w-2 rounded-full bg-background" />
+              <div className="mt-6 space-y-4">
+                {/* Option 1: Cash on Delivery */}
+                <label
+                  onClick={() => setPaymentMethod("cod")}
+                  className={`block border-4 border-border p-5 shadow-brutal cursor-pointer transition-all ${
+                    paymentMethod === "cod"
+                      ? "bg-yellow/30 border-black"
+                      : "bg-background hover:bg-foreground/5"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div
+                        className={`flex h-6 w-6 items-center justify-center rounded-full border-4 border-border ${
+                          paymentMethod === "cod" ? "bg-foreground" : "bg-panel"
+                        }`}
+                      >
+                        {paymentMethod === "cod" && (
+                          <div className="h-2 w-2 rounded-full bg-background" />
+                        )}
+                      </div>
+                      <span className="font-grotesk text-lg font-black uppercase">
+                        Cash on Delivery (COD)
+                      </span>
                     </div>
-                    <span className="font-grotesk text-lg font-black uppercase">
-                      Cash on Delivery (COD)
-                    </span>
+                    <Badge rotate={0} className="bg-accent text-black text-xs">
+                      Standard
+                    </Badge>
                   </div>
-                  <Badge rotate={0} className="bg-accent text-black text-xs">
-                    Standard
-                  </Badge>
-                </div>
-                <p className="mt-3 text-sm font-bold">
-                  Pay with cash directly to the courier when your order arrives — no delivery charge, no hidden fees. You pay exactly what you see.
-                </p>
+                  <p className="mt-3 text-sm font-bold text-muted-foreground">
+                    Pay with cash directly to the courier when your order arrives.
+                  </p>
+                </label>
+
+                {/* Option 2: bKash Send Money */}
+                <label
+                  onClick={() => setPaymentMethod("bkash")}
+                  className={`block border-4 border-border p-5 shadow-brutal cursor-pointer transition-all ${
+                    paymentMethod === "bkash"
+                      ? "bg-yellow/30 border-black"
+                      : "bg-background hover:bg-foreground/5"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div
+                        className={`flex h-6 w-6 items-center justify-center rounded-full border-4 border-border ${
+                          paymentMethod === "bkash" ? "bg-foreground" : "bg-panel"
+                        }`}
+                      >
+                        {paymentMethod === "bkash" && (
+                          <div className="h-2 w-2 rounded-full bg-background" />
+                        )}
+                      </div>
+                      <span className="font-grotesk text-lg font-black uppercase">
+                        bKash (Send Money)
+                      </span>
+                    </div>
+                    <Badge rotate={0} className="bg-pink-500 text-white text-xs">
+                      bKash
+                    </Badge>
+                  </div>
+                  <p className="mt-3 text-sm font-bold text-muted-foreground">
+                    Send money to our bKash personal number and enter your Transaction ID.
+                  </p>
+                </label>
+
+                {/* bKash Instructions & TrxID Input Box */}
+                {paymentMethod === "bkash" && (
+                  <div className="mt-4 border-4 border-border bg-panel p-5 shadow-brutal space-y-4 animate-in fade-in duration-150">
+                    <div className="border-2 border-border bg-yellow p-4 text-black shadow-brutal">
+                      <p className="font-grotesk text-xs font-black uppercase tracking-wider text-black/70">
+                        bKash Personal Number (Send Money)
+                      </p>
+                      <div className="mt-2 flex items-center justify-between gap-3">
+                        <span className="font-mono text-xl font-black tracking-tight">
+                          +880 1805428209
+                        </span>
+                        <button
+                          type="button"
+                          onClick={handleCopyNumber}
+                          className="flex items-center gap-1.5 border-2 border-black bg-panel px-3 py-1 text-xs font-black uppercase text-black hover:bg-black hover:text-white"
+                        >
+                          {copiedNumber ? (
+                            <>
+                              <Check size={14} />
+                              <span>Copied</span>
+                            </>
+                          ) : (
+                            <>
+                              <Copy size={14} />
+                              <span>Copy</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2 text-xs font-bold text-foreground">
+                      <p className="font-grotesk font-black uppercase text-sm">How to Pay with bKash:</p>
+                      <ol className="list-decimal list-inside space-y-1.5 pl-1">
+                        <li>Open bKash App or dial <span className="font-mono font-black">*247#</span> and select <span className="font-black">Send Money</span>.</li>
+                        <li>Enter recipient number <span className="font-mono font-black">01805428209</span> and amount <span className="font-black underline">{formatTaka(subtotal)}</span>.</li>
+                        <li>Enter your <span className="font-black">Full Name</span> ({name ? `<${name}>` : "e.g. Sadman"}) in the <span className="font-black">Reference</span> field.</li>
+                        <li>Copy the <span className="font-black">Transaction ID (TrxID)</span> from your confirmation SMS or app.</li>
+                      </ol>
+                    </div>
+
+                    <div className="border-t-2 border-border/30 pt-3">
+                      <label htmlFor="bkash_trx" className="block font-grotesk text-xs font-black uppercase tracking-wide">
+                        bKash Transaction ID (TrxID) <span className="text-accent">*</span>
+                      </label>
+                      <input
+                        id="bkash_trx"
+                        type="text"
+                        required={paymentMethod === "bkash"}
+                        value={bkashTrxId}
+                        onChange={(e) => setBkashTrxId(e.target.value)}
+                        placeholder="e.g. BLM7X9K2P0"
+                        className="mt-2 w-full border-4 border-border bg-background px-4 py-2.5 font-mono font-bold uppercase text-foreground shadow-brutal placeholder:text-muted-foreground focus:outline-none focus:ring-4 focus:ring-accent"
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 

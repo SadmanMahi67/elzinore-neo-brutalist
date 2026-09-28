@@ -29,6 +29,7 @@ export interface AdminOrder {
   email: string;
   address: string;
   paymentMethod: string;
+  bkashTrxId?: string | null;
   status: "placed" | "confirmed" | "delivered" | "cancelled";
   totalAmount: number;
   itemSummary: string;
@@ -418,9 +419,14 @@ export function AdminDashboard({ adminEmail }: { adminEmail?: string }) {
                           <td className="p-4 align-top">
                             <p className="font-grotesk text-base font-black tracking-tight">{order.shortId}</p>
                             <p className="mt-1 text-xs text-foreground/70">{order.date}</p>
-                            <span className="mt-2 inline-block border-2 border-border bg-panel px-1.5 py-0.5 text-[10px] uppercase">
+                            <span className="mt-2 inline-block border-2 border-border bg-panel px-1.5 py-0.5 text-[10px] font-black uppercase">
                               {order.paymentMethod.toUpperCase()}
                             </span>
+                            {order.paymentMethod.toLowerCase() === "bkash" && order.bkashTrxId && (
+                              <p className="mt-1 font-mono text-[11px] font-black text-black bg-yellow px-1.5 py-0.5 border-2 border-border">
+                                TrxID: {order.bkashTrxId}
+                              </p>
+                            )}
                           </td>
                           <td className="p-4 align-top">
                             <p className="font-black">{order.customerName}</p>
@@ -543,6 +549,13 @@ export function AdminDashboard({ adminEmail }: { adminEmail?: string }) {
                         <div className="border-t-2 border-border/20 pt-2">
                           <span className="font-bold text-foreground/70">Items: </span>
                           <span className="font-black uppercase">{order.itemSummary}</span>
+                        </div>
+                        <div className="flex justify-between items-center border-t-2 border-border/20 pt-2">
+                          <span className="font-bold text-foreground/70">Payment:</span>
+                          <span className="font-black uppercase">
+                            {order.paymentMethod}
+                            {order.paymentMethod.toLowerCase() === "bkash" && order.bkashTrxId ? ` (TrxID: ${order.bkashTrxId})` : ""}
+                          </span>
                         </div>
                         <div className="flex justify-between items-center border-t-2 border-border/20 pt-2">
                           <span className="font-bold text-foreground/70">Total:</span>

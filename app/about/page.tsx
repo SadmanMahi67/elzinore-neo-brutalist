@@ -35,8 +35,8 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <main>
-      <article className="mx-auto max-w-3xl px-4 py-16 md:px-6">
+    <main className="grid-paper">
+      <article className="mx-auto max-w-4xl px-4 py-12 md:px-6 md:py-16">
         <h1 className="font-grotesk text-6xl font-black uppercase leading-none tracking-tighter md:text-8xl">
           About Elzinore
         </h1>
@@ -49,7 +49,10 @@ export default function AboutPage() {
         </p>
       </article>
 
-      <AboutTimeline />
+      <div className="mx-auto max-w-6xl px-4 pb-20 md:px-6">
+        <AboutTimeline />
+      </div>
+
       <TrustStrip />
       <Testimonials />
     </main>

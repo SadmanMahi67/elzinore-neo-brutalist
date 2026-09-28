@@ -247,6 +247,27 @@ export async function POST(req: Request) {
       );
     }
 
+    // Payment method validation
+    const paymentMethod = (body.payment_method || body.paymentMethod || "cod").toString().trim().toLowerCase();
+    if (paymentMethod !== "cod" && paymentMethod !== "bkash") {
+      return NextResponse.json(
+        { error: "Invalid payment method. Allowed options are 'cod' and 'bkash'." },
+        { status: 400 }
+      );
+    }
+
+    let bkashTrxId: string | null = null;
+    if (paymentMethod === "bkash") {
+      const rawTrx = (body.bkash_trx_id || body.bkashTrxId || body.trx_id || "").toString().trim();
+      if (!rawTrx || rawTrx.length < 6 || rawTrx.length > 40) {
+        return NextResponse.json(
+          { error: "bKash Transaction ID (TrxID) is required for bKash orders (6 to 40 characters)." },
+          { status: 400 }
+        );
+      }
+      bkashTrxId = rawTrx;
+    }
+
     // 12. Determine auth user
     let userId: string | null = null;
     try {
@@ -258,8 +279,8 @@ export async function POST(req: Request) {
 
     // 13. Insert order record (user_id is populated if authenticated, null for guests)
     const orderRows = await sql`
-      INSERT INTO orders (user_id, customer_name, phone, email, address, payment_method, status, total_amount)
-      VALUES (${userId}, ${customerName}, ${normalizedPhone}, ${email}, ${address}, 'cod', 'placed', ${totalAmount})
+      INSERT INTO orders (user_id, customer_name, phone, email, address, payment_method, bkash_trx_id, status, total_amount)
+      VALUES (${userId}, ${customerName}, ${normalizedPhone}, ${email}, ${address}, ${paymentMethod}, ${bkashTrxId}, 'placed', ${totalAmount})
       RETURNING id, total_amount;
     `;
 

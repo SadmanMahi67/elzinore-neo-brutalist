@@ -28,7 +28,7 @@ export async function GET(req: Request) {
     if (statusParam && statusParam !== "all" && queryParam) {
       const searchPattern = `%${queryParam}%`;
       orders = await sql`
-        SELECT id, created_at, customer_name, phone, email, address, payment_method, status, total_amount
+        SELECT id, created_at, customer_name, phone, email, address, payment_method, bkash_trx_id, status, total_amount
         FROM orders
         WHERE LOWER(status) = ${statusParam}
           AND (customer_name ILIKE ${searchPattern} OR phone ILIKE ${searchPattern})
@@ -36,7 +36,7 @@ export async function GET(req: Request) {
       `;
     } else if (statusParam && statusParam !== "all") {
       orders = await sql`
-        SELECT id, created_at, customer_name, phone, email, address, payment_method, status, total_amount
+        SELECT id, created_at, customer_name, phone, email, address, payment_method, bkash_trx_id, status, total_amount
         FROM orders
         WHERE LOWER(status) = ${statusParam}
         ORDER BY created_at DESC;
@@ -44,14 +44,14 @@ export async function GET(req: Request) {
     } else if (queryParam) {
       const searchPattern = `%${queryParam}%`;
       orders = await sql`
-        SELECT id, created_at, customer_name, phone, email, address, payment_method, status, total_amount
+        SELECT id, created_at, customer_name, phone, email, address, payment_method, bkash_trx_id, status, total_amount
         FROM orders
         WHERE customer_name ILIKE ${searchPattern} OR phone ILIKE ${searchPattern}
         ORDER BY created_at DESC;
       `;
     } else {
       orders = await sql`
-        SELECT id, created_at, customer_name, phone, email, address, payment_method, status, total_amount
+        SELECT id, created_at, customer_name, phone, email, address, payment_method, bkash_trx_id, status, total_amount
         FROM orders
         ORDER BY created_at DESC;
       `;
@@ -102,6 +102,7 @@ export async function GET(req: Request) {
         email: order.email || "N/A",
         address: order.address,
         paymentMethod: order.payment_method,
+        bkashTrxId: order.bkash_trx_id || null,
         status: (order.status || "placed").toLowerCase(),
         totalAmount: Number(order.total_amount),
         itemSummary,

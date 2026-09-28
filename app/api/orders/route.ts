@@ -23,7 +23,7 @@ export async function GET() {
 
     // Query user's orders
     const orders = await sql`
-      SELECT id, created_at, address, status, total_amount
+      SELECT id, created_at, address, payment_method, bkash_trx_id, status, total_amount
       FROM orders
       WHERE user_id = ${userId}
       ORDER BY created_at DESC;
@@ -73,6 +73,8 @@ export async function GET() {
         date: formattedDate,
         city: order.address,
         status,
+        paymentMethod: order.payment_method || "cod",
+        bkashTrxId: order.bkash_trx_id || null,
         totalAmount: Number(order.total_amount),
         items: itemsByOrder[order.id] || [],
       };

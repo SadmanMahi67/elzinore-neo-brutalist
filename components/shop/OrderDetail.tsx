@@ -25,6 +25,7 @@ export interface OrderDetailData {
   email?: string;
   address: string;
   paymentMethod?: string;
+  bkashTrxId?: string;
   status?: string;
   totalAmount: number;
   items: OrderDetailItem[];
@@ -63,6 +64,7 @@ export function OrderDetail({
   const rawStatus = (order.status || "placed").toLowerCase();
   const badgeClass = statusColor[rawStatus] || "bg-yellow text-black";
   const displayStatus = rawStatus.charAt(0).toUpperCase() + rawStatus.slice(1);
+  const isBkash = order.paymentMethod?.toLowerCase() === "bkash";
 
   return (
     <div className={`border-4 border-border bg-panel p-6 shadow-brutal-xl md:p-10 ${className}`}>
@@ -95,10 +97,14 @@ export function OrderDetail({
       {/* Payment Information */}
       <div className="mt-6 border-4 border-border bg-yellow/20 p-4 font-bold text-foreground">
         <p className="font-grotesk text-lg font-black uppercase">
-          Payment Method: Cash on Delivery (COD)
+          Payment Method: {isBkash ? "bKash Send Money" : "Cash on Delivery (COD)"}
         </p>
         <p className="mt-1 text-sm">
-          {rawStatus === "delivered" ? (
+          {isBkash ? (
+            <span>
+              bKash Send Money payment submitted. {order.bkashTrxId ? `Transaction ID: ${order.bkashTrxId}.` : ""} Payment verification in progress.
+            </span>
+          ) : rawStatus === "delivered" ? (
             <span>Completed — Paid in full upon courier delivery.</span>
           ) : rawStatus === "cancelled" ? (
             <span>Order has been cancelled. No payment is required.</span>
