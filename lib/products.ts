@@ -1,3 +1,5 @@
+import { CATALOG } from "./catalog";
+
 export type ProductStatus = "live" | "upcoming";
 
 export type Product = {
@@ -8,6 +10,7 @@ export type Product = {
   originalPrice?: number;
   originalPriceLabel?: string;
   status: ProductStatus;
+  purchasable: boolean;
   images: string[];
   alt: string;
   description: string;
@@ -17,13 +20,14 @@ export type Product = {
 
 export const products: Product[] = [
   {
-    id: "carbon-fiber-wallet",
-    name: "Carbon Fiber RFID Wallet",
-    price: 1449,
-    priceLabel: "৳1,449",
+    id: CATALOG["carbon-fiber-wallet"].id,
+    name: CATALOG["carbon-fiber-wallet"].name,
+    price: CATALOG["carbon-fiber-wallet"].price,
+    priceLabel: `৳${CATALOG["carbon-fiber-wallet"].price.toLocaleString("en-BD")}`,
     originalPrice: 1600,
     originalPriceLabel: "৳1,600",
-    status: "live",
+    status: CATALOG["carbon-fiber-wallet"].status,
+    purchasable: CATALOG["carbon-fiber-wallet"].purchasable,
     images: [
       "/images/wallet-hero.jpg",
       "/images/wallet-lifestyle.jpg",
@@ -44,11 +48,12 @@ export const products: Product[] = [
     teaser: "Now shipping. The only thing we sell — on purpose.",
   },
   {
-    id: "leather-belts",
-    name: "Leather Belts",
-    price: 0,
+    id: CATALOG["leather-belts"].id,
+    name: CATALOG["leather-belts"].name,
+    price: CATALOG["leather-belts"].price,
     priceLabel: "TBA",
-    status: "upcoming",
+    status: CATALOG["leather-belts"].status,
+    purchasable: CATALOG["leather-belts"].purchasable,
     images: [],
     alt: "Placeholder for upcoming Elzinore leather belts",
     description:
@@ -57,11 +62,12 @@ export const products: Product[] = [
     teaser: "In sampling. Not for sale yet.",
   },
   {
-    id: "leather-imprinting",
-    name: "Leather Imprinting Machine",
-    price: 0,
+    id: CATALOG["leather-imprinting"].id,
+    name: CATALOG["leather-imprinting"].name,
+    price: CATALOG["leather-imprinting"].price,
     priceLabel: "TBA",
-    status: "upcoming",
+    status: CATALOG["leather-imprinting"].status,
+    purchasable: CATALOG["leather-imprinting"].purchasable,
     images: [],
     alt: "Placeholder for upcoming Elzinore leather imprinting machine",
     description:
@@ -70,11 +76,12 @@ export const products: Product[] = [
     teaser: "The workshop tool that comes after the wallet.",
   },
   {
-    id: "next-product",
-    name: "Next Product?",
-    price: 0,
+    id: CATALOG["next-product"].id,
+    name: CATALOG["next-product"].name,
+    price: CATALOG["next-product"].price,
     priceLabel: "TBA",
-    status: "upcoming",
+    status: CATALOG["next-product"].status,
+    purchasable: CATALOG["next-product"].purchasable,
     images: [],
     alt: "Placeholder slot for Elzinore’s next accessory",
     description:

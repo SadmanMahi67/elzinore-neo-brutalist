@@ -113,7 +113,7 @@ export async function GET(req: Request) {
   } catch (error: any) {
     console.error("Admin GET /api/admin/orders error:", error);
     return NextResponse.json(
-      { error: error.message || "Failed to fetch orders." },
+      { error: "Failed to fetch orders." },
       { status: 500 }
     );
   }

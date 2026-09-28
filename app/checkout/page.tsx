@@ -30,6 +30,7 @@ export default function CheckoutPage() {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
+  const [hpWebsite, setHpWebsite] = useState("");
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -42,31 +43,41 @@ export default function CheckoutPage() {
 
     // Client-side validation
     const trimmedName = name.trim();
-    const trimmedPhone = phone.trim();
     const trimmedAddress = address.trim();
+    const rawPhone = phone.trim();
 
-    if (!trimmedName) {
-      setError("Please enter your full name.");
-      return;
-    }
-    if (!trimmedPhone) {
-      setError("Please enter your phone number.");
+    if (trimmedName.length < 2 || trimmedName.length > 80) {
+      setError("Please enter your full name (2 to 80 characters).");
       return;
     }
 
-    const digitsOnly = trimmedPhone.replace(/[\s\-\(\)\+]/g, "");
-    if (digitsOnly.length < 10 || digitsOnly.length > 15 || !/^\d+$/.test(digitsOnly)) {
-      setError("Please enter a valid phone number (e.g., 017XXXXXXXX).");
+    // Normalize phone
+    const cleanPhone = rawPhone.replace(/[\s\-\(\)]/g, "");
+    let normalizedPhone = cleanPhone;
+    if (normalizedPhone.startsWith("+880")) {
+      normalizedPhone = "0" + normalizedPhone.slice(4);
+    } else if (normalizedPhone.startsWith("880")) {
+      normalizedPhone = "0" + normalizedPhone.slice(3);
+    }
+
+    if (!/^01[3-9]\d{8}$/.test(normalizedPhone)) {
+      setError("Please enter a valid Bangladeshi mobile number (e.g., 017XXXXXXXX).");
       return;
     }
 
-    if (!trimmedAddress) {
-      setError("Please enter your full delivery address.");
+    if (trimmedAddress.length < 15 || trimmedAddress.length > 300) {
+      setError("Please enter a detailed delivery address (at least 15 characters).");
       return;
     }
 
     if (items.length === 0) {
       setError("Your cart is empty.");
+      return;
+    }
+
+    if (hpWebsite) {
+      // Honeypot triggered
+      setError("Something went wrong. Please refresh and try again.");
       return;
     }
 
@@ -78,12 +89,12 @@ export default function CheckoutPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: trimmedName,
-          phone: trimmedPhone,
+          phone: normalizedPhone,
           email: email.trim(),
           address: trimmedAddress,
+          website_url: hpWebsite,
           items: items.map((l) => ({
-            name: l.name,
-            price: l.price,
+            productId: l.id,
             quantity: l.quantity,
           })),
         }),
@@ -104,7 +115,7 @@ export default function CheckoutPage() {
         shortId,
         totalAmount: data.totalAmount,
         customerName: trimmedName,
-        phone: trimmedPhone,
+        phone: normalizedPhone,
         address: trimmedAddress,
         date: formatBangladeshDateTime(new Date()),
         items: [...items],
@@ -237,6 +248,31 @@ export default function CheckoutPage() {
                     onChange={(e) => setAddress(e.target.value)}
                     placeholder="House/Apartment, Road, Area, City..."
                     className="mt-2 w-full border-4 border-border bg-background px-4 py-3 font-bold text-foreground shadow-brutal placeholder:text-muted-foreground focus:outline-none focus:ring-4 focus:ring-accent"
+                  />
+                </div>
+
+                {/* Honeypot field for bot protection (hidden from real users) */}
+                <div
+                  style={{
+                    position: "absolute",
+                    left: "-9999px",
+                    top: "-9999px",
+                    opacity: 0,
+                    height: 0,
+                    width: 0,
+                    overflow: "hidden",
+                  }}
+                  aria-hidden="true"
+                >
+                  <label htmlFor="website_url">Leave this field blank</label>
+                  <input
+                    id="website_url"
+                    type="text"
+                    name="website_url"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={hpWebsite}
+                    onChange={(e) => setHpWebsite(e.target.value)}
                   />
                 </div>
               </div>

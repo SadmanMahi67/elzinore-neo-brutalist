@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { getDb } from "@/lib/db";
 import { formatBangladeshDateTime } from "@/lib/date";
+import { rateLimitCancel, getClientIp } from "@/lib/rateLimit";
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -90,7 +91,7 @@ export async function GET(
   } catch (error: any) {
     console.error("GET /api/orders/[id] error:", error);
     return NextResponse.json(
-      { error: error.message || "Failed to fetch order details." },
+      { error: "Failed to fetch order details." },
       { status: 500 }
     );
   }
@@ -119,9 +120,21 @@ export async function PATCH(
       return NextResponse.json({ error: "Order not found." }, { status: 404 });
     }
 
+    // Rate limit cancellation attempts (5 attempts per 10 minutes)
+    const clientIp = getClientIp(req);
+    const cancelRateResult = await rateLimitCancel(`${userId}:${clientIp}`);
+    if (!cancelRateResult.success) {
+      return NextResponse.json(
+        { error: "Too many cancel attempts. Please try again in a few minutes." },
+        { status: 429 }
+      );
+    }
+
     const body = await req.json().catch(() => ({}));
     const action = body?.action;
 
+    // Strictly enforce that the only permitted action is "cancel"
+    // Client cannot supply any custom status or alter other fields
     if (action !== "cancel") {
       return NextResponse.json({ error: "Invalid action." }, { status: 400 });
     }
@@ -155,6 +168,7 @@ export async function PATCH(
       );
     }
 
+    // Atomic SQL enforcement: only update if status is 'placed' and owned by user
     const updatedRows = await sql`
       UPDATE orders
       SET status = 'cancelled', updated_at = now()
@@ -183,7 +197,7 @@ export async function PATCH(
   } catch (error: any) {
     console.error("PATCH /api/orders/[id] cancel error:", error);
     return NextResponse.json(
-      { error: error.message || "Failed to cancel order." },
+      { error: "Failed to cancel order." },
       { status: 500 }
     );
   }

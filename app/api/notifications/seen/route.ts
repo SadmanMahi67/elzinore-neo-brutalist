@@ -23,7 +23,7 @@ export async function POST() {
   } catch (error: any) {
     console.error("POST /api/notifications/seen error:", error);
     return NextResponse.json(
-      { error: error.message || "Failed to mark notifications as seen." },
+      { error: "Failed to mark notifications as seen." },
       { status: 500 }
     );
   }
