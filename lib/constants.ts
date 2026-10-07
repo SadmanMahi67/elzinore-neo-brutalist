@@ -4,7 +4,7 @@
  * Falls back to the env var so Vercel preview deploys get their own URL.
  */
 export const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://elzinore.com";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://www.elzinore.com";
 
 // Swap this for a real WhatsApp link later, e.g. https://wa.me/8801XXXXXXXXX
 export const ORDER_HREF = "/#order";
