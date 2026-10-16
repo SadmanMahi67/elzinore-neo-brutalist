@@ -22,7 +22,7 @@ const items = [
   },
   {
     q: "Is there a warranty?",
-    a: "If the pop-up mechanism or clasp fails from normal use within 30 days, we repair or replace it. Carbon fiber will scuff — that is character, not a defect.",
+    a: "If the pop-up mechanism or clasp fails from normal use within 12 months, we repair or replace it. Carbon fiber will scuff — that is character, not a defect.",
   },
 ];
 

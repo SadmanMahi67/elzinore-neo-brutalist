@@ -37,13 +37,14 @@ export const products: Product[] = [
     ],
     alt: "Elzinore carbon fiber RFID wallet",
     description:
-      "A slim pop-up wallet we obsessed over for months — carbon fiber shell, RFID blocking, and a magnetic clasp that actually stays shut in a Dhaka auto. One product, done properly, before we chase the next thing.",
+      "A slim pop-up wallet we obsessed over for months — carbon fiber shell, RFID blocking, and a magnetic clasp that actually stays shut in a Dhaka auto. Backed by a 12-month warranty. One product, done properly, before we chase the next thing.",
     specs: [
       "RFID-blocking card sleeve",
       "Carbon fiber hard shell",
       "Pop-up card mechanism",
       "Magnetic clasp",
       "Fits everyday cards + a few notes",
+      "12-month warranty",
     ],
     teaser: "Now shipping. The only thing we sell — on purpose.",
   },

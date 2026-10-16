@@ -75,6 +75,9 @@ export function ProductCard({
                 <span className="border-2 border-border bg-panel px-2 py-0.5 text-xs font-black uppercase text-foreground">
                   Free Delivery
                 </span>
+                <span className="border-2 border-border bg-yellow px-2 py-0.5 text-xs font-black uppercase text-black">
+                  12-Mo Warranty
+                </span>
               </div>
             )}
             <span className="mt-3 inline-block border-4 border-border bg-panel px-3 py-1 font-black uppercase text-foreground">

@@ -4,14 +4,14 @@ import { Faq } from "@/components/sections/Faq";
 export const metadata: Metadata = {
   title: "FAQ — Shipping, Warranty & RFID",
   description:
-    "Frequently asked questions about Elzinore's carbon fiber pop-up wallet: Cash on Delivery across Bangladesh, delivery times, and 6-month warranty.",
+    "Frequently asked questions about Elzinore's carbon fiber pop-up wallet: Cash on Delivery across Bangladesh, delivery times, and 12-month warranty.",
   alternates: {
     canonical: "/faq",
   },
   openGraph: {
     title: "FAQ — Shipping, Warranty & RFID — Elzinore",
     description:
-      "Frequently asked questions about Elzinore's carbon fiber pop-up wallet: Cash on Delivery across Bangladesh, delivery times, and 6-month warranty.",
+      "Frequently asked questions about Elzinore's carbon fiber pop-up wallet: Cash on Delivery across Bangladesh, delivery times, and 12-month warranty.",
     url: "/faq",
     images: [
       {
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "FAQ — Shipping, Warranty & RFID — Elzinore",
     description:
-      "Frequently asked questions about Elzinore's carbon fiber pop-up wallet: Cash on Delivery across Bangladesh, delivery times, and 6-month warranty.",
+      "Frequently asked questions about Elzinore's carbon fiber pop-up wallet: Cash on Delivery across Bangladesh, delivery times, and 12-month warranty.",
     images: ["/images/wallet-hero.jpg"],
   },
 };
