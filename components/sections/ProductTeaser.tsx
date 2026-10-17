@@ -36,7 +36,19 @@ export function ProductTeaser() {
               <h2 className="font-grotesk text-4xl font-black uppercase leading-none tracking-tighter md:text-6xl">
                 {liveWallet.name}
               </h2>
-              <p className="mt-3 text-3xl font-black">{liveWallet.priceLabel}</p>
+              <div className="mt-3 flex flex-wrap items-center gap-3">
+                <span className="text-3xl font-black">{liveWallet.priceLabel}</span>
+                {liveWallet.originalPriceLabel && (
+                  <div className="flex items-center gap-2">
+                    <span className="text-xl font-bold text-muted-foreground line-through">
+                      {liveWallet.originalPriceLabel}
+                    </span>
+                    <span className="border-2 border-border bg-accent px-2 py-0.5 text-xs font-black uppercase text-black">
+                      {liveWallet.discountLabel || "30% OFF"}
+                    </span>
+                  </div>
+                )}
+              </div>
               <p className="mt-4 text-lg font-bold md:text-xl">
                 Currently our only product — by design. Everything else stays in development until it&apos;s ready to stand next to it.
               </p>

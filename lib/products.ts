@@ -9,6 +9,7 @@ export type Product = {
   priceLabel: string;
   originalPrice?: number;
   originalPriceLabel?: string;
+  discountLabel?: string;
   status: ProductStatus;
   purchasable: boolean;
   images: string[];
@@ -24,8 +25,9 @@ export const products: Product[] = [
     name: CATALOG["carbon-fiber-wallet"].name,
     price: CATALOG["carbon-fiber-wallet"].price,
     priceLabel: `৳${CATALOG["carbon-fiber-wallet"].price.toLocaleString("en-BD")}`,
-    originalPrice: 1600,
-    originalPriceLabel: "৳1,600",
+    originalPrice: 2049,
+    originalPriceLabel: "৳2,049",
+    discountLabel: "30% OFF",
     status: CATALOG["carbon-fiber-wallet"].status,
     purchasable: CATALOG["carbon-fiber-wallet"].purchasable,
     images: [

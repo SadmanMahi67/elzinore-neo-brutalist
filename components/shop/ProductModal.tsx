@@ -145,7 +145,7 @@ export function ProductModal() {
                         {product.originalPriceLabel}
                       </span>
                       <span className="border-2 border-border bg-accent px-2 py-0.5 text-xs font-black uppercase text-black">
-                        Limited offer
+                        {product.discountLabel || "30% OFF"}
                       </span>
                       <span className="border-2 border-border bg-panel px-2 py-0.5 text-xs font-black uppercase text-foreground">
                         Free Delivery
