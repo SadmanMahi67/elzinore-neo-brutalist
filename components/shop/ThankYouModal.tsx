@@ -208,7 +208,7 @@ export function ThankYouModal({
               </div>
               <div className="flex flex-wrap items-center gap-2 pt-2 border-t-2 border-border/20 text-xs font-black">
                 <span className="border-2 border-border bg-accent px-2 py-0.5 text-black">
-                  FREE DELIVERY
+                  NATIONWIDE DELIVERY
                 </span>
                 <span className="border-2 border-border bg-panel px-2 py-0.5 text-foreground">
                   Cash on Delivery (COD)

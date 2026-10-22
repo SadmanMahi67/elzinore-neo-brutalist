@@ -114,7 +114,7 @@ export function OrderDetail({
               <span className="font-black underline">
                 {formatTaka(order.totalAmount)}
               </span>{" "}
-              ready in cash when the courier delivers to your door. No extra delivery charge.
+              ready in cash when the courier delivers to your door.
             </span>
           )}
         </p>

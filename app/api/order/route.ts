@@ -138,7 +138,7 @@ export async function POST(req: Request) {
 
     // 9. Server-side Catalog Lookup and Price Enforcement
     // Ignore any name or price sent by client!
-    let totalAmount = 0;
+    let itemsSubtotal = 0;
     const validatedItems: {
       productId: string;
       name: string;
@@ -187,7 +187,7 @@ export async function POST(req: Request) {
 
       const unitPrice = catalogItem.price;
       const lineTotal = unitPrice * rawQty;
-      totalAmount += lineTotal;
+      itemsSubtotal += lineTotal;
 
       validatedItems.push({
         productId: catalogItem.id,
@@ -198,12 +198,20 @@ export async function POST(req: Request) {
       });
     }
 
-    if (totalAmount <= 0 || totalAmount > 50000) {
+    if (itemsSubtotal <= 0 || itemsSubtotal > 50000) {
       return NextResponse.json(
-        { error: "Order total amount is outside allowable limits (৳1 - ৳50,000)." },
+        { error: "Order items amount is outside allowable limits (৳1 - ৳50,000)." },
         { status: 400 }
       );
     }
+
+    // Determine delivery charge based on delivery zone: Inside Dhaka = 70tk, Outside Dhaka = 130tk
+    const rawZone = (body.delivery_zone || body.deliveryZone || "inside_dhaka").toString().trim().toLowerCase();
+    const isOutsideDhaka = rawZone === "outside_dhaka" || rawZone === "outside";
+    const deliveryZone = isOutsideDhaka ? "outside_dhaka" : "inside_dhaka";
+    const deliveryZoneLabel = isOutsideDhaka ? "Outside Dhaka" : "Inside Dhaka";
+    const deliveryCharge = isOutsideDhaka ? 130 : 70;
+    const totalAmount = itemsSubtotal + deliveryCharge;
 
     const sql = getDb();
 
@@ -277,10 +285,12 @@ export async function POST(req: Request) {
       userId = null;
     }
 
+    const finalAddress = `${address}\n[Delivery: ${deliveryZoneLabel} (৳${deliveryCharge})]`;
+
     // 13. Insert order record (user_id is populated if authenticated, null for guests)
     const orderRows = await sql`
-      INSERT INTO orders (user_id, customer_name, phone, email, address, payment_method, bkash_trx_id, status, total_amount)
-      VALUES (${userId}, ${customerName}, ${normalizedPhone}, ${email}, ${address}, ${paymentMethod}, ${bkashTrxId}, 'placed', ${totalAmount})
+      INSERT INTO orders (user_id, customer_name, phone, email, address, payment_method, bkash_trx_id, status, total_amount, delivery_charge, delivery_zone)
+      VALUES (${userId}, ${customerName}, ${normalizedPhone}, ${email}, ${finalAddress}, ${paymentMethod}, ${bkashTrxId}, 'placed', ${totalAmount}, ${deliveryCharge}, ${deliveryZone})
       RETURNING id, total_amount;
     `;
 

@@ -6,14 +6,14 @@ import { SITE_URL } from "@/lib/constants";
 export const metadata: Metadata = {
   title: "Shop Minimalist Carbon Fiber Wallets",
   description:
-    "Buy the Elzinore Carbon Fiber RFID Wallet in Bangladesh. Slim pop-up design, RFID blocking, ৳1,449 with nationwide COD. More accessories coming soon.",
+    "Buy the Elzinore Carbon Fiber RFID Wallet in Bangladesh. Slim pop-up design, RFID blocking, ৳1,399 with nationwide COD. More accessories coming soon.",
   alternates: {
     canonical: "/shop",
   },
   openGraph: {
     title: "Shop Minimalist Carbon Fiber Wallets — Elzinore",
     description:
-      "Buy the Elzinore Carbon Fiber RFID Wallet in Bangladesh. Slim pop-up design, RFID blocking, ৳1,449 with nationwide COD.",
+      "Buy the Elzinore Carbon Fiber RFID Wallet in Bangladesh. Slim pop-up design, RFID blocking, ৳1,399 with nationwide COD.",
     url: "/shop",
     images: [
       {
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Shop Minimalist Carbon Fiber Wallets — Elzinore",
     description:
-      "Buy the Elzinore Carbon Fiber RFID Wallet in Bangladesh. Slim pop-up design, RFID blocking, ৳1,449 with nationwide COD.",
+      "Buy the Elzinore Carbon Fiber RFID Wallet in Bangladesh. Slim pop-up design, RFID blocking, ৳1,399 with nationwide COD.",
     images: ["/images/wallet-hero.jpg"],
   },
 };

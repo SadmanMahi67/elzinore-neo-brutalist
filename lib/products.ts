@@ -27,7 +27,7 @@ export const products: Product[] = [
     priceLabel: `৳${CATALOG["carbon-fiber-wallet"].price.toLocaleString("en-BD")}`,
     originalPrice: 2049,
     originalPriceLabel: "৳2,049",
-    discountLabel: "30% OFF",
+    discountLabel: "32% OFF",
     status: CATALOG["carbon-fiber-wallet"].status,
     purchasable: CATALOG["carbon-fiber-wallet"].purchasable,
     images: [

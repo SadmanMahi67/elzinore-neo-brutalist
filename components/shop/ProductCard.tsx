@@ -73,7 +73,7 @@ export function ProductCard({
                   {product.discountLabel || "30% OFF"}
                 </span>
                 <span className="border-2 border-border bg-panel px-2 py-0.5 text-xs font-black uppercase text-foreground">
-                  Free Delivery
+                  COD Available
                 </span>
                 <span className="border-2 border-border bg-yellow px-2 py-0.5 text-xs font-black uppercase text-black">
                   12-Mo Warranty

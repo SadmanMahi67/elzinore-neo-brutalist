@@ -82,6 +82,14 @@ async function runMigration() {
     );
   `;
 
+  console.log("Adding 'delivery_charge' and 'delivery_zone' columns to 'orders' if they do not exist...");
+  await sql`
+    ALTER TABLE orders ADD COLUMN IF NOT EXISTS delivery_charge NUMERIC DEFAULT 70;
+  `;
+  await sql`
+    ALTER TABLE orders ADD COLUMN IF NOT EXISTS delivery_zone TEXT DEFAULT 'inside_dhaka';
+  `;
+
   console.log("Migration executed successfully!");
 }
 

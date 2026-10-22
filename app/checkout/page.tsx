@@ -32,10 +32,14 @@ export default function CheckoutPage() {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
+  const [deliveryZone, setDeliveryZone] = useState<"inside" | "outside">("inside");
   const [paymentMethod, setPaymentMethod] = useState<"cod" | "bkash">("cod");
   const [bkashTrxId, setBkashTrxId] = useState("");
   const [copiedNumber, setCopiedNumber] = useState(false);
   const [hpWebsite, setHpWebsite] = useState("");
+
+  const deliveryCharge = deliveryZone === "inside" ? 70 : 130;
+  const totalAmount = subtotal + deliveryCharge;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -112,6 +116,7 @@ export default function CheckoutPage() {
           phone: normalizedPhone,
           email: email.trim(),
           address: trimmedAddress,
+          delivery_zone: deliveryZone === "inside" ? "inside_dhaka" : "outside_dhaka",
           payment_method: paymentMethod,
           bkash_trx_id: paymentMethod === "bkash" ? trimmedTrx : null,
           website_url: hpWebsite,
@@ -258,6 +263,52 @@ export default function CheckoutPage() {
                     placeholder="e.g. sadman@example.com"
                     className="mt-2 w-full border-4 border-border bg-background px-4 py-3 font-bold text-foreground shadow-brutal placeholder:text-muted-foreground focus:outline-none focus:ring-4 focus:ring-accent"
                   />
+                </div>
+
+                <div>
+                  <label className="block font-grotesk text-sm font-black uppercase tracking-wide">
+                    Delivery Area <span className="text-accent">*</span>
+                  </label>
+                  <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setDeliveryZone("inside")}
+                      className={`flex items-center justify-between border-4 border-border p-4 text-left font-grotesk transition-all ${
+                        deliveryZone === "inside"
+                          ? "bg-yellow border-black shadow-brutal text-black"
+                          : "bg-background hover:bg-foreground/5 text-foreground"
+                      }`}
+                    >
+                      <div>
+                        <p className="font-black uppercase">Inside Dhaka</p>
+                        <p className={`text-xs font-bold ${deliveryZone === "inside" ? "text-black/80" : "text-muted-foreground"}`}>
+                          2–3 business days
+                        </p>
+                      </div>
+                      <span className="border-2 border-border bg-panel px-2.5 py-1 text-sm font-black text-foreground">
+                        ৳70
+                      </span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setDeliveryZone("outside")}
+                      className={`flex items-center justify-between border-4 border-border p-4 text-left font-grotesk transition-all ${
+                        deliveryZone === "outside"
+                          ? "bg-yellow border-black shadow-brutal text-black"
+                          : "bg-background hover:bg-foreground/5 text-foreground"
+                      }`}
+                    >
+                      <div>
+                        <p className="font-black uppercase">Outside Dhaka</p>
+                        <p className={`text-xs font-bold ${deliveryZone === "outside" ? "text-black/80" : "text-muted-foreground"}`}>
+                          3–5 business days
+                        </p>
+                      </div>
+                      <span className="border-2 border-border bg-panel px-2.5 py-1 text-sm font-black text-foreground">
+                        ৳130
+                      </span>
+                    </button>
+                  </div>
                 </div>
 
                 <div>
@@ -410,7 +461,7 @@ export default function CheckoutPage() {
                       <p className="font-grotesk font-black uppercase text-sm">How to Pay with bKash:</p>
                       <ol className="list-decimal list-inside space-y-1.5 pl-1">
                         <li>Open bKash App or dial <span className="font-mono font-black">*247#</span> and select <span className="font-black">Send Money</span>.</li>
-                        <li>Enter recipient number <span className="font-mono font-black">01805428209</span> and amount <span className="font-black underline">{formatTaka(subtotal)}</span>.</li>
+                        <li>Enter recipient number <span className="font-mono font-black">01805428209</span> and amount <span className="font-black underline">{formatTaka(totalAmount)}</span>.</li>
                         <li>Enter your <span className="font-black">Full Name</span> ({name ? `<${name}>` : "e.g. Sadman"}) in the <span className="font-black">Reference</span> field.</li>
                         <li>Copy the <span className="font-black">Transaction ID (TrxID)</span> from your confirmation SMS or app.</li>
                       </ol>
@@ -456,7 +507,7 @@ export default function CheckoutPage() {
                   "Placing order..."
                 ) : (
                   <span className="flex items-center justify-center gap-3">
-                    Place Order • {formatTaka(subtotal)}
+                    Place Order • {formatTaka(totalAmount)}
                     <ArrowRight strokeWidth={3} className="h-6 w-6" />
                   </span>
                 )}
@@ -503,15 +554,15 @@ export default function CheckoutPage() {
               </div>
               <div className="flex justify-between items-center text-sm">
                 <span className="flex items-center gap-2">
-                  <Truck className="h-4 w-4" /> Delivery
+                  <Truck className="h-4 w-4" /> Delivery ({deliveryZone === "inside" ? "Inside Dhaka" : "Outside Dhaka"})
                 </span>
-                <span className="border-2 border-border bg-accent px-2 py-0.5 text-xs font-black uppercase text-black">
-                  Free (৳0)
+                <span className="border-2 border-border bg-panel px-2 py-0.5 text-xs font-black uppercase text-foreground">
+                  {formatTaka(deliveryCharge)}
                 </span>
               </div>
               <div className="border-t-4 border-border pt-3 flex justify-between font-grotesk text-2xl font-black uppercase">
                 <span>Total</span>
-                <span className="text-accent">{formatTaka(subtotal)}</span>
+                <span className="text-accent">{formatTaka(totalAmount)}</span>
               </div>
             </div>
 

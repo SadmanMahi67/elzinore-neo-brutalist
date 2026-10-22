@@ -15,7 +15,7 @@ export const CATALOG: Record<string, CatalogItem> = {
   "carbon-fiber-wallet": {
     id: "carbon-fiber-wallet",
     name: "Carbon Fiber RFID Wallet",
-    price: 1449,
+    price: 1399,
     purchasable: true,
     status: "live",
   },
