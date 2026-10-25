@@ -47,6 +47,19 @@ export async function PATCH(
     }
 
     const sql = getDb();
+
+    // Check previous status before updating to manage inventory
+    const existingOrders = await sql`
+      SELECT status FROM orders WHERE id = ${id};
+    `;
+    if (existingOrders.length === 0) {
+      return NextResponse.json(
+        { error: `Order not found with ID: ${id}` },
+        { status: 404 }
+      );
+    }
+    const prevStatus = (existingOrders[0].status || "").toLowerCase();
+
     const updatedRows = await sql`
       UPDATE orders
       SET status = ${rawStatus}, updated_at = now()
@@ -54,11 +67,35 @@ export async function PATCH(
       RETURNING id, status;
     `;
 
-    if (updatedRows.length === 0) {
-      return NextResponse.json(
-        { error: `Order not found with ID: ${id}` },
-        { status: 404 }
-      );
+    // Stock update logic:
+    // When order is confirmed, deduct wallet stock. When cancelled, restore stock.
+    const isNowConfirmed = rawStatus === "confirmed" || rawStatus === "delivered";
+    const wasConfirmed = prevStatus === "confirmed" || prevStatus === "delivered";
+
+    if (!wasConfirmed && isNowConfirmed) {
+      const items = await sql`
+        SELECT quantity FROM order_items WHERE order_id = ${id} AND product_name ILIKE '%wallet%';
+      `;
+      const qty = items.reduce((acc: number, item: any) => acc + Number(item.quantity || 1), 0);
+      if (qty > 0) {
+        await sql`
+          UPDATE inventory
+          SET stock = GREATEST(0, stock - ${qty}), updated_at = now()
+          WHERE product_id = 'carbon-fiber-wallet';
+        `;
+      }
+    } else if (wasConfirmed && rawStatus === "cancelled") {
+      const items = await sql`
+        SELECT quantity FROM order_items WHERE order_id = ${id} AND product_name ILIKE '%wallet%';
+      `;
+      const qty = items.reduce((acc: number, item: any) => acc + Number(item.quantity || 1), 0);
+      if (qty > 0) {
+        await sql`
+          UPDATE inventory
+          SET stock = stock + ${qty}, updated_at = now()
+          WHERE product_id = 'carbon-fiber-wallet';
+        `;
+      }
     }
 
     return NextResponse.json(
@@ -104,6 +141,21 @@ export async function DELETE(
     }
 
     const sql = getDb();
+
+    // Check if the order was confirmed before deletion
+    const existingOrders = await sql`
+      SELECT status FROM orders WHERE id = ${id};
+    `;
+    const wasConfirmed = existingOrders[0]?.status === "confirmed" || existingOrders[0]?.status === "delivered";
+
+    let walletQty = 0;
+    if (wasConfirmed) {
+      const items = await sql`
+        SELECT quantity FROM order_items WHERE order_id = ${id} AND product_name ILIKE '%wallet%';
+      `;
+      walletQty = items.reduce((acc: number, item: any) => acc + Number(item.quantity || 1), 0);
+    }
+
     const deletedRows = await sql`
       DELETE FROM orders
       WHERE id = ${id}
@@ -115,6 +167,14 @@ export async function DELETE(
         { error: `Order not found with ID: ${id}` },
         { status: 404 }
       );
+    }
+
+    if (wasConfirmed && walletQty > 0) {
+      await sql`
+        UPDATE inventory
+        SET stock = stock + ${walletQty}, updated_at = now()
+        WHERE product_id = 'carbon-fiber-wallet';
+      `;
     }
 
     const adminEmail = adminCheck.email || "admin";

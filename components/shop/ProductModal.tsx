@@ -9,10 +9,12 @@ import { useCart } from "@/components/providers/CartProvider";
 import { useProductModal } from "@/components/providers/ModalProvider";
 import { Button } from "@/components/ui/Button";
 import { modalSnap } from "@/lib/motion";
+import { useStock } from "@/lib/useStock";
 
 export function ProductModal() {
   const { product, closeProduct, restoreFocus } = useProductModal();
   const { addItem } = useCart();
+  const { stock } = useStock(product?.stock ?? 25);
   const reduce = useReducedMotion();
   const dialogRef = useRef<HTMLDivElement>(null);
   const [qty, setQty] = useState(1);
@@ -153,9 +155,39 @@ export function ProductModal() {
                       <span className="border-2 border-border bg-yellow px-2 py-0.5 text-xs font-black uppercase text-black">
                         12 Months Warranty
                       </span>
+                      <span
+                        className={`border-2 border-border px-2 py-0.5 text-xs font-black uppercase ${
+                          stock <= 0
+                            ? "bg-red-500 text-white"
+                            : stock <= 5
+                            ? "bg-yellow text-black"
+                            : "bg-emerald-400 text-black"
+                        }`}
+                      >
+                        {stock > 0 ? `${stock} in stock` : "Sold out"}
+                      </span>
                     </div>
                   )}
                 </div>
+
+                {live && (
+                  <div className="mt-4 flex items-center gap-2 border-2 border-border bg-panel p-2 shadow-brutal text-xs font-black uppercase">
+                    <span
+                      className={`inline-block h-3 w-3 rounded-full ${
+                        stock <= 0
+                          ? "bg-red-500"
+                          : stock <= 5
+                          ? "bg-yellow animate-ping"
+                          : "bg-emerald-400 animate-pulse"
+                      }`}
+                    />
+                    <span>
+                      {stock > 0
+                        ? `${stock} in stock • Batch 01 (25 Wallets)`
+                        : "Sold out • Next batch coming soon"}
+                    </span>
+                  </div>
+                )}
                 <p className="mt-4 text-lg font-bold">{product.description}</p>
                 <ul className="mt-4 space-y-1 text-sm font-black uppercase">
                   {product.specs.map((s) => (
@@ -178,7 +210,8 @@ export function ProductModal() {
                       <span className="min-w-8 text-center text-2xl font-black">{qty}</span>
                       <button
                         type="button"
-                        className="h-12 w-12 border-4 border-border font-black shadow-brutal active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
+                        disabled={stock <= 0}
+                        className="h-12 w-12 border-4 border-border font-black shadow-brutal active:translate-x-[2px] active:translate-y-[2px] active:shadow-none disabled:opacity-40"
                         onClick={() => setQty((q) => q + 1)}
                         aria-label="Increase quantity"
                       >
@@ -187,12 +220,15 @@ export function ProductModal() {
                     </div>
                     <Button
                       variant="primary"
+                      disabled={stock <= 0}
                       onClick={() => {
-                        addItem(product.id, qty);
-                        setAdded(true);
+                        if (stock > 0) {
+                          addItem(product.id, Math.min(qty, stock));
+                          setAdded(true);
+                        }
                       }}
                     >
-                      {added ? "Added" : "Add to Cart"}
+                      {stock <= 0 ? "Sold Out" : added ? "Added" : "Add to Cart"}
                     </Button>
                   </div>
                 ) : (

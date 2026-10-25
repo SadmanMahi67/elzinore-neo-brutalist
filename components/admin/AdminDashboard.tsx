@@ -75,6 +75,28 @@ export function AdminDashboard({ adminEmail }: { adminEmail?: string }) {
   const [deleting, setDeleting] = useState(false);
   const [modalError, setModalError] = useState<string | null>(null);
 
+  const [walletStock, setWalletStock] = useState<number>(25);
+  const [initialStock, setInitialStock] = useState<number>(25);
+
+  const fetchStock = useCallback(async () => {
+    try {
+      const res = await fetch("/api/stock");
+      if (res.ok) {
+        const data = await res.json();
+        if (typeof data.stock === "number") {
+          setWalletStock(data.stock);
+          if (typeof data.initialStock === "number") {
+            setInitialStock(data.initialStock);
+          }
+        }
+      }
+    } catch {}
+  }, []);
+
+  useEffect(() => {
+    fetchStock();
+  }, [fetchStock]);
+
   // Debounce search input by 350ms
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const handleSearchChange = (val: string) => {
@@ -143,6 +165,7 @@ export function AdminDashboard({ adminEmail }: { adminEmail?: string }) {
 
       setSuccessMessage(`Order ${prevOrder.shortId} status changed to ${nextStatus.toUpperCase()}`);
       setTimeout(() => setSuccessMessage(null), 3000);
+      fetchStock();
     } catch (err: any) {
       // Rollback
       setOrders((current) =>
@@ -231,6 +254,7 @@ export function AdminDashboard({ adminEmail }: { adminEmail?: string }) {
       setDeleteModalOpen(false);
       setDeleteTarget(null);
       fetchOrders();
+      fetchStock();
     } catch (err: any) {
       setModalError(err.message || "Deletion failed.");
     } finally {
@@ -300,7 +324,26 @@ export function AdminDashboard({ adminEmail }: { adminEmail?: string }) {
         )}
 
         {/* Stats Row */}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="border-4 border-border bg-panel p-4 shadow-brutal">
+            <p className="text-xs font-black uppercase text-foreground/70">Wallet Stock Remaining</p>
+            <div className="mt-1 flex items-baseline gap-2">
+              <p
+                className={`font-grotesk text-3xl font-black ${
+                  walletStock <= 0
+                    ? "text-red-500"
+                    : walletStock <= 5
+                    ? "text-yellow"
+                    : "text-emerald-500"
+                }`}
+              >
+                {walletStock}
+              </p>
+              <span className="text-xs font-bold text-foreground/60">
+                / {initialStock} wallets in stock
+              </span>
+            </div>
+          </div>
           <div className="border-4 border-border bg-panel p-4 shadow-brutal">
             <p className="text-xs font-black uppercase text-foreground/70">Total Orders Displayed</p>
             <p className="mt-1 font-grotesk text-3xl font-black">{orders.length}</p>

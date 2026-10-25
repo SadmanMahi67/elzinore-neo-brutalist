@@ -6,6 +6,7 @@ import { ImagePlaceholder } from "@/components/decor/ImagePlaceholder";
 import { useProductModal } from "@/components/providers/ModalProvider";
 import { Card } from "@/components/ui/Card";
 import { reveal } from "@/lib/motion";
+import { useStock } from "@/lib/useStock";
 import type { Product } from "@/lib/products";
 
 export function ProductCard({
@@ -18,6 +19,7 @@ export function ProductCard({
   const { openProduct } = useProductModal();
   const reduce = useReducedMotion();
   const live = product.status === "live";
+  const { stock } = useStock(product.stock ?? 25);
 
   return (
     <motion.div
@@ -36,6 +38,19 @@ export function ProductCard({
         {live && (
           <span className="absolute left-4 top-4 z-10 -rotate-6 rounded-full border-4 border-border bg-yellow px-3 py-1 font-black uppercase text-black shadow-brutal">
             ★ Signature piece
+          </span>
+        )}
+        {live && (
+          <span
+            className={`absolute right-4 top-4 z-10 rotate-3 border-4 border-border px-3 py-1 font-black uppercase shadow-brutal ${
+              stock <= 0
+                ? "bg-red-500 text-white"
+                : stock <= 5
+                ? "bg-yellow text-black"
+                : "bg-emerald-400 text-black"
+            }`}
+          >
+            {stock > 0 ? `${stock} in stock` : "Sold out"}
           </span>
         )}
         <button
@@ -77,6 +92,17 @@ export function ProductCard({
                 </span>
                 <span className="border-2 border-border bg-yellow px-2 py-0.5 text-xs font-black uppercase text-black">
                   12-Mo Warranty
+                </span>
+                <span
+                  className={`border-2 border-border px-2 py-0.5 text-xs font-black uppercase ${
+                    stock <= 0
+                      ? "bg-red-500 text-white"
+                      : stock <= 5
+                      ? "bg-yellow text-black"
+                      : "bg-emerald-400 text-black"
+                  }`}
+                >
+                  {stock > 0 ? `${stock} in stock` : "Sold out"}
                 </span>
               </div>
             )}

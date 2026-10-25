@@ -10,6 +10,7 @@ export type Product = {
   originalPrice?: number;
   originalPriceLabel?: string;
   discountLabel?: string;
+  stock?: number;
   status: ProductStatus;
   purchasable: boolean;
   images: string[];
@@ -28,6 +29,7 @@ export const products: Product[] = [
     originalPrice: 2049,
     originalPriceLabel: "৳2,049",
     discountLabel: "32% OFF",
+    stock: 25,
     status: CATALOG["carbon-fiber-wallet"].status,
     purchasable: CATALOG["carbon-fiber-wallet"].purchasable,
     images: [

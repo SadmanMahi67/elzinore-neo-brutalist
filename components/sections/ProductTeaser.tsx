@@ -6,9 +6,11 @@ import { Button } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
 import { useProductModal } from "@/components/providers/ModalProvider";
 import { liveWallet } from "@/lib/products";
+import { useStock } from "@/lib/useStock";
 
 export function ProductTeaser() {
   const { openProduct } = useProductModal();
+  const { stock } = useStock(liveWallet.stock ?? 25);
 
   return (
     <section id="product" className="halftone border-b-4 border-border bg-violet py-24 text-black md:py-32">
@@ -48,6 +50,17 @@ export function ProductTeaser() {
                     </span>
                   </div>
                 )}
+                <span
+                  className={`border-2 border-border px-2.5 py-0.5 text-xs font-black uppercase ${
+                    stock <= 0
+                      ? "bg-red-500 text-white"
+                      : stock <= 5
+                      ? "bg-yellow text-black"
+                      : "bg-emerald-400 text-black"
+                  }`}
+                >
+                  {stock > 0 ? `${stock} in stock` : "Sold out"}
+                </span>
               </div>
               <p className="mt-4 text-lg font-bold md:text-xl">
                 Currently our only product — by design. Everything else stays in development until it&apos;s ready to stand next to it.

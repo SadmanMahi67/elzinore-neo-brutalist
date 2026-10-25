@@ -90,6 +90,21 @@ async function runMigration() {
     ALTER TABLE orders ADD COLUMN IF NOT EXISTS delivery_zone TEXT DEFAULT 'inside_dhaka';
   `;
 
+  console.log("Creating 'inventory' table if it does not exist...");
+  await sql`
+    CREATE TABLE IF NOT EXISTS inventory (
+      product_id TEXT PRIMARY KEY,
+      stock INTEGER NOT NULL DEFAULT 25,
+      initial_stock INTEGER NOT NULL DEFAULT 25,
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    );
+  `;
+  await sql`
+    INSERT INTO inventory (product_id, stock, initial_stock)
+    VALUES ('carbon-fiber-wallet', 25, 25)
+    ON CONFLICT (product_id) DO NOTHING;
+  `;
+
   console.log("Migration executed successfully!");
 }
 

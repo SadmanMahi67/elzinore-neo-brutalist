@@ -215,6 +215,22 @@ export async function POST(req: Request) {
 
     const sql = getDb();
 
+    // Check inventory availability (prevent ordering when sold out)
+    const inventoryRows = await sql`
+      SELECT stock FROM inventory WHERE product_id = 'carbon-fiber-wallet' LIMIT 1;
+    `;
+    const availableStock = Number(inventoryRows[0]?.stock ?? 25);
+    const requestedWalletQty = validatedItems
+      .filter((i) => i.productId === "carbon-fiber-wallet")
+      .reduce((sum, i) => sum + i.quantity, 0);
+
+    if (requestedWalletQty > 0 && availableStock <= 0) {
+      return NextResponse.json(
+        { error: "Sorry, the Carbon Fiber RFID Wallet is currently out of stock." },
+        { status: 400 }
+      );
+    }
+
     // 10. Phone number throttling (Max 3 orders per 24 hours per phone number)
     const phoneCountRows = await sql`
       SELECT COUNT(*)::int AS count
