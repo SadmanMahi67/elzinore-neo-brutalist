@@ -46,7 +46,7 @@ export function ProductTeaser() {
                       {liveWallet.originalPriceLabel}
                     </span>
                     <span className="border-2 border-border bg-accent px-2 py-0.5 text-xs font-black uppercase text-black">
-                      {liveWallet.discountLabel || "30% OFF"}
+                      {liveWallet.discountLabel || "12% OFF"}
                     </span>
                   </div>
                 )}
